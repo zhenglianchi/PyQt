@@ -58,7 +58,7 @@ class TwinCat3_ADSserver:
                         callback(name, value)  # 触发回调
                 
                 # 更新间隔（可根据需要调整）
-                time.sleep(0.1)
+                time.sleep(0.01)
                 
             except pyads.ADSError as e:
                 print(f"ADS通信错误: {e}")

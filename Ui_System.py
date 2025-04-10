@@ -16,9 +16,9 @@ from PyQt5.QtGui import QImage, QPixmap
 import time
 import cv2
 from ultralytics import YOLO
-#from ads import TwinCat3_ADSserver
+from ads import TwinCat3_ADSserver
 from Servo import servo
-#import pyads
+import pyads
 
 
 class Ui_MainWindow(object):
@@ -187,6 +187,7 @@ class Ui_MainWindow(object):
 "    border-bottom: 2px solid #a3a3a3; /* 下边边框 */\n"
 "margin-top: 0px;")
         self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_6.clicked.connect(self.open_connect)
         self.horizontalLayout_3.addWidget(self.pushButton_6)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
@@ -1898,12 +1899,12 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.open_camera_flag = False
         # 初始化连接
-        #self.tc3 = TwinCat3_ADSserver()
+        self.tc3 = TwinCat3_ADSserver()
 
     def add_adsvars(self):
         # 添加要监控的变量
-        self.tc3.add_variable("MAIN.bCounter", pyads.PLCTYPE_INT, self.value_changed)
-        self.tc3.add_variable("MAIN.fTemperature", pyads.PLCTYPE_BOOL, self.value_changed)
+        for i in range(7):
+            self.tc3.add_variable(f"MAIN.axis_pos[{i+1}]", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name, value):
@@ -1912,6 +1913,13 @@ class Ui_MainWindow(object):
     def update_image(self, image):
         # Update the image_label with a new image
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
+
+    def open_connect(self):
+        self.tc3.connect()
+        print("已连接twincat")
+        self.add_adsvars()
+        self.tc3.start_thread()
+
 
     def open_camera(self):
         if self.open_camera_flag:
