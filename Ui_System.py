@@ -16,9 +16,9 @@ from PyQt5.QtGui import QImage, QPixmap
 import time
 import cv2
 from ultralytics import YOLO
-from ads import TwinCat3_ADSserver
+#from ads import TwinCat3_ADSserver
 from Servo import servo
-import pyads
+#import pyads
 
 
 class Ui_MainWindow(object):
@@ -1897,9 +1897,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.open_camera_flag = False
-
         # 初始化连接
-        self.tc3 = TwinCat3_ADSserver()
+        #self.tc3 = TwinCat3_ADSserver()
 
     def add_adsvars(self):
         # 添加要监控的变量

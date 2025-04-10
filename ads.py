@@ -11,7 +11,6 @@ class TwinCat3_ADSserver:
         self.ip = ip
         self.amsNetIdTarget = amsNetIdTarget
         self.plc = pyads.Connection(ip, pyads.PORT_TC3PLC1)
-        self.plc.open()
         # 新增线程相关属性
         self.update_thread = None
         self.running = False
@@ -85,21 +84,7 @@ class TwinCat3_ADSserver:
                 self.update_thread.join()
             print("变量监控线程已停止")
 
-
-
-# 初始化连接
-tc3 = TwinCat3_ADSserver()
-
-# 定义回调函数
-def value_changed(name, value):
-    print(f"变量更新: {name} = {value}")
-
-# 添加要监控的变量
-tc3.add_variable("MAIN.bCounter", pyads.PLCTYPE_INT, value_changed)
-tc3.add_variable("MAIN.fTemperature", pyads.PLCTYPE_BOOL, value_changed)
-
-# 启动线程
-tc3.start_thread()
-
-# 停止线程
-tc3.stop_thread()
+    def connect(self):
+        """连接到TwinCAT3 PLC"""
+        self.plc.open()
+        print("已连接到TwinCAT3 PLC")
