@@ -7,6 +7,7 @@ from machinevisiontoolbox.base import *
 from machinevisiontoolbox import *
 from spatialmath.base import *
 from spatialmath import *
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 
 def visjac_p(uv, depth,K):
@@ -104,3 +105,26 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
 
 
 
+class VisualServoThread(QThread):
+    update_pose_signal = pyqtSignal(list, list)
+
+    def __init__(self, pose, video_thread, lambda_gain):
+        super().__init__()
+        self.pose = pose
+        self.video_thread = video_thread
+        self.lambda_gain = lambda_gain
+        self._run_flag = True
+
+    def run(self):
+        while self._run_flag:
+            if self.video_thread.uv is not None and self.video_thread.p_star is not None and self.video_thread.Z is not None:
+                uv = self.video_thread.uv
+                p_star = self.video_thread.p_star
+                Z = self.video_thread.Z
+                cam_delta, world_delta = servo(self.pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
+                self.update_pose_signal.emit(cam_delta.tolist(), world_delta.tolist())
+            time.sleep(0.1)  # 避免CPU占用过高
+
+    def stop(self):
+        self._run_flag = False
+        self.wait()

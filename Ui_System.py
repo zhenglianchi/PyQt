@@ -1,14 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from camera import Camera
-import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
-import time
-import cv2
-from ultralytics import YOLO
 from ads import TwinCat3_ADSserver
-from Servo import servo
 import pyads
+import re
+from video import VideoThread
+
 
 
 class Ui_MainWindow(object):
@@ -1411,7 +1407,7 @@ class Ui_MainWindow(object):
         self.tableWidget_2.setDragEnabled(False)
         self.tableWidget_2.setAlternatingRowColors(True)
         self.tableWidget_2.setGridStyle(QtCore.Qt.DashLine)
-        self.tableWidget_2.setRowCount(13)
+        self.tableWidget_2.setRowCount(14)
         self.tableWidget_2.setObjectName("tableWidget_2")
         self.tableWidget_2.setColumnCount(5)
         item = QtWidgets.QTableWidgetItem()
@@ -1440,6 +1436,8 @@ class Ui_MainWindow(object):
         self.tableWidget_2.setVerticalHeaderItem(11, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_2.setVerticalHeaderItem(12, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget_2.setVerticalHeaderItem(13, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget_2.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -1921,7 +1919,112 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        self._translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(self._translate("MainWindow", "空间碎片抓捕地面实验系统"))
+        self.label_5.setText(self._translate("MainWindow", "空 间 碎 片 抓 捕 实 验 系 统"))
+        self.SingleMachine.setTitle(self._translate("MainWindow", "总体控制"))
+        self.pushButton_6.setText(self._translate("MainWindow", "启动"))
+        self.pushButton_8.setText(self._translate("MainWindow", "开启相机"))
+        self.pushButton_2.setText(self._translate("MainWindow", "开启电机"))
+        self.pushButton_7.setText(self._translate("MainWindow", "开启六维力"))
+        self.label_36.setText(self._translate("MainWindow", "IP:"))
+        self.SingleMachine_2.setTitle(self._translate("MainWindow", "单机调试"))
+        self.pushButton_9.setText(self._translate("MainWindow", "启动"))
+        self.pushButton_10.setText(self._translate("MainWindow", "正转"))
+        self.pushButton_11.setText(self._translate("MainWindow", "反转"))
+        self.label_43.setText(self._translate("MainWindow", "位置"))
+        self.pushButton_12.setText(self._translate("MainWindow", "停止"))
+        self.pushButton_13.setText(self._translate("MainWindow", "复位"))
+        self.pushButton_14.setText(self._translate("MainWindow", "回零"))
+        self.pushButton_15.setText(self._translate("MainWindow", "移动"))
+        self.label_44.setText(self._translate("MainWindow", "速度"))
+        self.groupBox_5.setTitle(self._translate("MainWindow", "分系统流程"))
+        self.pushButton.setText(self._translate("MainWindow", "机构展开"))
+        self.pushButton_3.setText(self._translate("MainWindow", "捕获舱门打开"))
+        self.pushButton_4.setText(self._translate("MainWindow", "目标抓捕"))
+        self.pushButton_5.setText(self._translate("MainWindow", "捕获舱门关闭"))
+        self.pushButton_16.setText(self._translate("MainWindow", "转移对接"))
+        self.pushButton_17.setText(self._translate("MainWindow", "转移舱门打开"))
+        self.pushButton_18.setText(self._translate("MainWindow", "机构收拢"))
+        self.pushButton_19.setText(self._translate("MainWindow", "目标推送"))
+        self.groupBox_4.setTitle(self._translate("MainWindow", "日志"))
+        self.groupBox_3.setTitle(self._translate("MainWindow", "采集图像"))
+        self.label.setText(self._translate("MainWindow", "X"))
+        self.label_2.setText(self._translate("MainWindow", "Y"))
+        self.label_3.setText(self._translate("MainWindow", "Z"))
+        self.label_4.setText(self._translate("MainWindow", "Rr"))
+        self.label_6.setText(self._translate("MainWindow", "Rp"))
+        self.label_32.setText(self._translate("MainWindow", "Ry"))
+        self.label_37.setText(self._translate("MainWindow", "Fx"))
+        self.label_38.setText(self._translate("MainWindow", "Fy"))
+        self.label_39.setText(self._translate("MainWindow", "Fz"))
+        self.label_40.setText(self._translate("MainWindow", "Tx"))
+        self.label_41.setText(self._translate("MainWindow", "Ty"))
+        self.label_33.setText(self._translate("MainWindow", "Tz"))
+        self.groupBox_31.setTitle(self._translate("MainWindow", "电机"))
+        self.tableWidget_2.setSortingEnabled(False)
+        item = self.tableWidget_2.verticalHeaderItem(0)
+        item.setText(self._translate("MainWindow", "捕获电机1"))
+        item = self.tableWidget_2.verticalHeaderItem(1)
+        item.setText(self._translate("MainWindow", "捕获电机2"))
+        item = self.tableWidget_2.verticalHeaderItem(2)
+        item.setText(self._translate("MainWindow", "捕获电机3"))
+        item = self.tableWidget_2.verticalHeaderItem(3)
+        item.setText(self._translate("MainWindow", "捕获电机4"))
+        item = self.tableWidget_2.verticalHeaderItem(4)
+        item.setText(self._translate("MainWindow", "捕获电机5"))
+        item = self.tableWidget_2.verticalHeaderItem(5)
+        item.setText(self._translate("MainWindow", "捕获电机6"))
+        item = self.tableWidget_2.verticalHeaderItem(6)
+        item.setText(self._translate("MainWindow", "捕获电机7"))
+        item = self.tableWidget_2.verticalHeaderItem(7)
+        item.setText(self._translate("MainWindow", "关节电机1"))
+        item = self.tableWidget_2.verticalHeaderItem(8)
+        item.setText(self._translate("MainWindow", "关节电机2"))
+        item = self.tableWidget_2.verticalHeaderItem(9)
+        item.setText(self._translate("MainWindow", "关节电机3"))
+        item = self.tableWidget_2.verticalHeaderItem(10)
+        item.setText(self._translate("MainWindow", "关节电机4"))
+        item = self.tableWidget_2.verticalHeaderItem(11)
+        item.setText(self._translate("MainWindow", "关节电机5"))
+        item = self.tableWidget_2.verticalHeaderItem(12)
+        item.setText(self._translate("MainWindow", "关节电机6"))
+        item = self.tableWidget_2.verticalHeaderItem(13)
+        item.setText(self._translate("MainWindow", "关节电机7"))
+        item = self.tableWidget_2.horizontalHeaderItem(0)
+        item.setText(self._translate("MainWindow", "电机编号"))
+        item = self.tableWidget_2.horizontalHeaderItem(1)
+        item.setText(self._translate("MainWindow", "电机状态"))
+        item = self.tableWidget_2.horizontalHeaderItem(2)
+        item.setText(self._translate("MainWindow", "电机转速"))
+        item = self.tableWidget_2.horizontalHeaderItem(3)
+        item.setText(self._translate("MainWindow", "移动距离"))
+        item = self.tableWidget_2.horizontalHeaderItem(4)
+        item.setText(self._translate("MainWindow", "报警号"))
+        __sortingEnabled = self.tableWidget_2.isSortingEnabled()
+        self.tableWidget_2.setSortingEnabled(False)
+        self.tableWidget_2.setSortingEnabled(__sortingEnabled)
+        self.groupBox.setTitle(self._translate("MainWindow", "到位开关"))
+        self.label_14.setText(self._translate("MainWindow", "B1"))
+        self.label_15.setText(self._translate("MainWindow", "B2"))
+        self.label_16.setText(self._translate("MainWindow", "B3"))
+        self.label_17.setText(self._translate("MainWindow", "B4"))
+        self.label_18.setText(self._translate("MainWindow", "B5"))
+        self.label_19.setText(self._translate("MainWindow", "B6"))
+        self.label_7.setText(self._translate("MainWindow", "B7"))
+        self.label_8.setText(self._translate("MainWindow", "B8"))
+        self.label_9.setText(self._translate("MainWindow", "B9"))
+        self.label_10.setText(self._translate("MainWindow", "B10"))
+        self.label_11.setText(self._translate("MainWindow", "B11"))
+        self.label_12.setText(self._translate("MainWindow", "B12"))
+        self.toolBar.setWindowTitle(self._translate("MainWindow", "toolBar"))
+        self.set_var()
+
+    def set_var(self):
         self.open_camera_flag = False
+        self.connect_flag = False
         # 初始化连接
         self.tc3 = TwinCat3_ADSserver()
 
@@ -1931,18 +2034,31 @@ class Ui_MainWindow(object):
             self.tc3.add_variable(f"MAIN.axis_pos[{i+1}]", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
-    def value_changed(self, name, value):
-        print(f"变量更新: {name} = {value}")
+    def value_changed(self, name ,value):
+        pattern = r'\d+'
+        row = int(re.findall(pattern, name)[0])
+        item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
+        self.tableWidget_2.setItem(row-1,3,item_data)
 
     def update_image(self, image):
         # Update the image_label with a new image
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
 
     def open_connect(self):
-        self.tc3.connect()
-        print("已连接twincat")
-        self.add_adsvars()
-        self.tc3.start_thread()
+        if self.connect_flag:
+            self.tc3.stop_monitoring()
+            print("已断开twincat")
+            self.tc3.variables={}
+            self.tc3.close()
+            self.pushButton_6.setText(self._translate("MainWindow", "开启"))
+        else:
+            self.tc3.connect()
+            print("已连接twincat")
+            self.add_adsvars()
+            self.tc3.variable_updated_signal.connect(self.value_changed)
+            self.tc3.start_monitoring()
+            self.connect_flag = True
+            self.pushButton_6.setText(self._translate("MainWindow", "关闭"))
 
 
     def open_camera(self):
@@ -1959,265 +2075,10 @@ class Ui_MainWindow(object):
             self.open_camera_flag = True
             self.pushButton_8.setText("关闭相机")
 
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "空间碎片抓捕地面实验系统"))
-        self.label_5.setText(_translate("MainWindow", "空 间 碎 片 抓 捕 实 验 系 统"))
-        self.SingleMachine.setTitle(_translate("MainWindow", "总体控制"))
-        self.pushButton_6.setText(_translate("MainWindow", "启动"))
-        self.pushButton_8.setText(_translate("MainWindow", "开启相机"))
-        self.pushButton_2.setText(_translate("MainWindow", "开启电机"))
-        self.pushButton_7.setText(_translate("MainWindow", "开启六维力"))
-        self.label_36.setText(_translate("MainWindow", "IP:"))
-        self.SingleMachine_2.setTitle(_translate("MainWindow", "单机调试"))
-        self.pushButton_9.setText(_translate("MainWindow", "启动"))
-        self.pushButton_10.setText(_translate("MainWindow", "正转"))
-        self.pushButton_11.setText(_translate("MainWindow", "反转"))
-        self.label_43.setText(_translate("MainWindow", "位置"))
-        self.pushButton_12.setText(_translate("MainWindow", "停止"))
-        self.pushButton_13.setText(_translate("MainWindow", "复位"))
-        self.pushButton_14.setText(_translate("MainWindow", "回零"))
-        self.pushButton_15.setText(_translate("MainWindow", "移动"))
-        self.label_44.setText(_translate("MainWindow", "速度"))
-        self.groupBox_5.setTitle(_translate("MainWindow", "分系统流程"))
-        self.pushButton.setText(_translate("MainWindow", "机构展开"))
-        self.pushButton_3.setText(_translate("MainWindow", "捕获舱门打开"))
-        self.pushButton_4.setText(_translate("MainWindow", "目标抓捕"))
-        self.pushButton_5.setText(_translate("MainWindow", "捕获舱门关闭"))
-        self.pushButton_16.setText(_translate("MainWindow", "转移对接"))
-        self.pushButton_17.setText(_translate("MainWindow", "转移舱门打开"))
-        self.pushButton_18.setText(_translate("MainWindow", "机构收拢"))
-        self.pushButton_19.setText(_translate("MainWindow", "目标推送"))
-        self.groupBox_4.setTitle(_translate("MainWindow", "日志"))
-        self.groupBox_3.setTitle(_translate("MainWindow", "采集图像"))
-        self.label.setText(_translate("MainWindow", "X"))
-        self.label_2.setText(_translate("MainWindow", "Y"))
-        self.label_3.setText(_translate("MainWindow", "Z"))
-        self.label_4.setText(_translate("MainWindow", "Rr"))
-        self.label_6.setText(_translate("MainWindow", "Rp"))
-        self.label_32.setText(_translate("MainWindow", "Ry"))
-        self.label_37.setText(_translate("MainWindow", "Fx"))
-        self.label_38.setText(_translate("MainWindow", "Fy"))
-        self.label_39.setText(_translate("MainWindow", "Fz"))
-        self.label_40.setText(_translate("MainWindow", "Tx"))
-        self.label_41.setText(_translate("MainWindow", "Ty"))
-        self.label_33.setText(_translate("MainWindow", "Tz"))
-        self.groupBox_31.setTitle(_translate("MainWindow", "电机"))
-        self.tableWidget_2.setSortingEnabled(False)
-        item = self.tableWidget_2.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "捕获电机1"))
-        item = self.tableWidget_2.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "捕获电机2"))
-        item = self.tableWidget_2.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "捕获电机3"))
-        item = self.tableWidget_2.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "捕获电机4"))
-        item = self.tableWidget_2.verticalHeaderItem(4)
-        item.setText(_translate("MainWindow", "捕获电机5"))
-        item = self.tableWidget_2.verticalHeaderItem(5)
-        item.setText(_translate("MainWindow", "捕获电机6"))
-        item = self.tableWidget_2.verticalHeaderItem(6)
-        item.setText(_translate("MainWindow", "关节电机1"))
-        item = self.tableWidget_2.verticalHeaderItem(7)
-        item.setText(_translate("MainWindow", "关节电机2"))
-        item = self.tableWidget_2.verticalHeaderItem(8)
-        item.setText(_translate("MainWindow", "关节电机3"))
-        item = self.tableWidget_2.verticalHeaderItem(9)
-        item.setText(_translate("MainWindow", "关节电机4"))
-        item = self.tableWidget_2.verticalHeaderItem(10)
-        item.setText(_translate("MainWindow", "关节电机5"))
-        item = self.tableWidget_2.verticalHeaderItem(11)
-        item.setText(_translate("MainWindow", "关节电机6"))
-        item = self.tableWidget_2.verticalHeaderItem(12)
-        item.setText(_translate("MainWindow", "关节电机7"))
-        item = self.tableWidget_2.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "电机编号"))
-        item = self.tableWidget_2.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "电机状态"))
-        item = self.tableWidget_2.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "电机转速"))
-        item = self.tableWidget_2.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "移动距离"))
-        item = self.tableWidget_2.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "报警号"))
-        __sortingEnabled = self.tableWidget_2.isSortingEnabled()
-        self.tableWidget_2.setSortingEnabled(False)
-        self.tableWidget_2.setSortingEnabled(__sortingEnabled)
-        self.groupBox.setTitle(_translate("MainWindow", "到位开关"))
-        self.label_14.setText(_translate("MainWindow", "B1"))
-        self.label_15.setText(_translate("MainWindow", "B2"))
-        self.label_16.setText(_translate("MainWindow", "B3"))
-        self.label_17.setText(_translate("MainWindow", "B4"))
-        self.label_18.setText(_translate("MainWindow", "B5"))
-        self.label_19.setText(_translate("MainWindow", "B6"))
-        self.label_7.setText(_translate("MainWindow", "B7"))
-        self.label_8.setText(_translate("MainWindow", "B8"))
-        self.label_9.setText(_translate("MainWindow", "B9"))
-        self.label_10.setText(_translate("MainWindow", "B10"))
-        self.label_11.setText(_translate("MainWindow", "B11"))
-        self.label_12.setText(_translate("MainWindow", "B12"))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
 
 
 
 
-names = {
-    0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus',
-    6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant',
-    11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat',
-    16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear',
-    22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag',
-    27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard',
-    32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove',
-    36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle',
-    40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl',
-    46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli',
-    51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair',
-    57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet',
-    62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard',
-    67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink',
-    72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors',
-    77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'
-}
+    
 
-class VisualServoThread(QThread):
-    update_pose_signal = pyqtSignal(list, list)
-
-    def __init__(self, pose, video_thread, lambda_gain):
-        super().__init__()
-        self.pose = pose
-        self.video_thread = video_thread
-        self.lambda_gain = lambda_gain
-        self._run_flag = True
-
-    def run(self):
-        while self._run_flag:
-            if self.video_thread.uv is not None and self.video_thread.p_star is not None and self.video_thread.Z is not None:
-                uv = self.video_thread.uv
-                p_star = self.video_thread.p_star
-                Z = self.video_thread.Z
-                cam_delta, world_delta = servo(self.pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
-                self.update_pose_signal.emit(cam_delta.tolist(), world_delta.tolist())
-            time.sleep(0.1)  # 避免CPU占用过高
-
-    def stop(self):
-        self._run_flag = False
-        self.wait()
-
-
-class VideoThread(QThread):
-    change_pixmap_signal = pyqtSignal(QImage)
-
-    def __init__(self):
-        super().__init__()
-        self.camera = Camera()
-        self._run_flag = True
-        self.yolo = YOLO("yolo11s.pt").to("cuda")
-        self.uv = None
-        self.p_star = None
-        self.Z = None
-
-    def run(self):
-        while self._run_flag:
-            if self.camera.is_opened():
-                color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame = self.camera.get_aligned_images()
-
-                img_color = np.array(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
-
-                # 调用 YOLO 模型进行检测
-                results = self.yolo(img_color,verbose=False)
-                # 获取检测结果
-                # 每个检测框数据格式为 [x1, y1, x2, y2, confidence, class_id]
-                boxes = results[0].boxes.data.cpu().numpy()
-                
-                # 遍历每个检测框
-                for box in boxes:
-                    x1, y1, x2, y2, conf, cls_id = box
-                    if cls_id == 9 and conf > 0.5:
-                        # 转换坐标为整数
-                        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                        # 绘制矩形框（颜色为绿色，线宽为2）
-                        cv2.rectangle(img_color, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                        # 生成标签文本（类别和置信度）
-                        label = f"{names[int(cls_id)]} {conf:.2f}"
-                        # 绘制标签（在框上方显示）
-                        cv2.putText(img_color, label, (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-                        detected_points = [(x1,y1),(x2,y1),(x2,y2),(x1,y2)]
-                        # 计算所有点的 x 坐标和 y 坐标的平均值
-                        average_x = (detected_points[0][0] + detected_points[1][0] + detected_points[2][0] + detected_points[3][0]) / 4
-                        average_y = (detected_points[0][1] + detected_points[1][1] + detected_points[2][1] + detected_points[3][1]) / 4
-
-                        # 得到中心点坐标
-                        center_point = (average_x, average_y)
-
-                        target_points = self.resize_and_center_box(detected_points,padding=0)
-
-                        for point in target_points:
-                            cv2.circle(img_color, point, 3, (255, 255, 255), -1)
-
-                        uv = np.array(detected_points).T
-                        p_star = np.array(target_points).T
-
-                        self.uv = uv
-                        self.p_star = p_star
-                        self.Z = img_depth[int(center_point[1]), int(center_point[0])]/1000.0
-
-                img_color = cv2.resize(img_color, (467, 336))  # 注意参数是 (width, height)
-
-                # get image info
-                h, w, ch = img_color.shape
-                # create QImage from image
-                bytes_per_line = ch * w
-                convert_to_qt_format = QImage(img_color.data, w, h, bytes_per_line, QImage.Format_RGB888)
-                # emit signal
-                self.change_pixmap_signal.emit(convert_to_qt_format)
-            else:
-                time.sleep(1)
-
-    def stop(self):
-        """Sets run flag to False and waits for thread to finish"""
-        self._run_flag = False
-        self.wait()
-
-    def start_camera(self):
-        """Start the camera if it's not already running."""
-        self._run_flag = True
-        self.start()
-
-    def stop_camera(self):
-        """Stop the camera without stopping the thread."""
-        self.camera.stop()
-        self._run_flag = False
-
-    def resize_and_center_box(self, target_points, padding=0):
-        # 计算目标框的中心点
-        center_x = np.mean([point[0] for point in target_points])
-        center_y = np.mean([point[1] for point in target_points])
-
-        # 图像中心点
-        image_center_x = self.camera.resolution[0] / 2
-        image_center_y = self.camera.resolution[1] / 2
-
-        # 计算目标框与图像中心的偏移量
-        offset_x = image_center_x - center_x
-        offset_y = image_center_y - center_y
-
-        # 将目标框移动到图像中心
-        moved_points = [[point[0] + offset_x, point[1] + offset_y] for point in target_points]
-
-        # 计算移动后的目标框的宽度和高度
-        x_coords, y_coords = zip(*moved_points)
-        width = max(x_coords) - min(x_coords)
-        height = max(y_coords) - min(y_coords)
-
-        # 计算放大比例
-        max_dim = max(width, height)
-        scale_factor = (max_dim + 2 * padding) / max_dim
-
-        # 等比例放大目标框
-        scaled_points = [[int((point[0] - image_center_x) * scale_factor + image_center_x),
-                        int((point[1] - image_center_y) * scale_factor + image_center_y)] for point in moved_points]
-
-        return scaled_points
+    
