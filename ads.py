@@ -5,7 +5,10 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class TwinCat3_ADSserver(QThread):
     # Signal to send data back to the main thread
-    variable_updated_signal = pyqtSignal(str, float)
+    moving_signal = pyqtSignal(str, bool)
+    velo_signal = pyqtSignal(str, float)
+    pos_signal = pyqtSignal(str, float)
+    error_signal = pyqtSignal(str, int)
 
     def __init__(self, ip="127.0.0.1.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
         '''
@@ -58,10 +61,18 @@ class TwinCat3_ADSserver(QThread):
 
                 # 遍历并读取所有变量
                 for name, (var_type, callback) in current_vars.items():
+                    types = name.split(".")[-1]
                     value = self.read_by_name(name, var_type)
-
-                    # Emit signal with the updated value
-                    self.variable_updated_signal.emit(name, value)
+                    if types == "Moving":
+                        self.moving_signal.emit(name, value)
+                    elif types == "ActVelo":
+                        self.velo_signal.emit(name, value)
+                    elif types == "ActPos":
+                        self.pos_signal.emit(name, value)
+                    elif types == "ErrorCode":
+                        self.error_signal.emit(name, value)
+                    else:
+                        print("读取到不存在的变量")
                 
                 # 更新间隔（可根据需要调整）
                 time.sleep(0.01)

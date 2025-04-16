@@ -355,6 +355,7 @@ class Ui_MainWindow(object):
 "    border-bottom: 2px solid #a3a3a3; /* 下边边框 */\n"
 "margin-top: 0px;")
         self.pushButton_9.setObjectName("pushButton_9")
+        self.pushButton_9.clicked.connect(self.single_enable)
         self.horizontalLayout_15.addWidget(self.pushButton_9)
         spacerItem5 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_15.addItem(spacerItem5)
@@ -1933,12 +1934,18 @@ class Ui_MainWindow(object):
         self.SingleMachine_2.setTitle(self._translate("MainWindow", "单机调试"))
         self.pushButton_9.setText(self._translate("MainWindow", "启动"))
         self.pushButton_10.setText(self._translate("MainWindow", "正转"))
+        self.pushButton_10.clicked.connect(self.single_forward)
         self.pushButton_11.setText(self._translate("MainWindow", "反转"))
+        self.pushButton_11.clicked.connect(self.single_reverse)
         self.label_43.setText(self._translate("MainWindow", "位置"))
         self.pushButton_12.setText(self._translate("MainWindow", "停止"))
+        self.pushButton_12.clicked.connect(self.single_stop)
         self.pushButton_13.setText(self._translate("MainWindow", "复位"))
+        self.pushButton_13.clicked.connect(self.single_reset)
         self.pushButton_14.setText(self._translate("MainWindow", "回零"))
+        self.pushButton_14.clicked.connect(self.single_zero)
         self.pushButton_15.setText(self._translate("MainWindow", "移动"))
+        self.pushButton_15.clicked.connect(self.single_move)
         self.label_44.setText(self._translate("MainWindow", "速度"))
         self.groupBox_5.setTitle(self._translate("MainWindow", "分系统流程"))
         self.pushButton.setText(self._translate("MainWindow", "机构展开"))
@@ -1966,33 +1973,33 @@ class Ui_MainWindow(object):
         self.groupBox_31.setTitle(self._translate("MainWindow", "电机"))
         self.tableWidget_2.setSortingEnabled(False)
         item = self.tableWidget_2.verticalHeaderItem(0)
-        item.setText(self._translate("MainWindow", "捕获电机1"))
-        item = self.tableWidget_2.verticalHeaderItem(1)
-        item.setText(self._translate("MainWindow", "捕获电机2"))
-        item = self.tableWidget_2.verticalHeaderItem(2)
-        item.setText(self._translate("MainWindow", "捕获电机3"))
-        item = self.tableWidget_2.verticalHeaderItem(3)
-        item.setText(self._translate("MainWindow", "捕获电机4"))
-        item = self.tableWidget_2.verticalHeaderItem(4)
-        item.setText(self._translate("MainWindow", "捕获电机5"))
-        item = self.tableWidget_2.verticalHeaderItem(5)
-        item.setText(self._translate("MainWindow", "捕获电机6"))
-        item = self.tableWidget_2.verticalHeaderItem(6)
-        item.setText(self._translate("MainWindow", "捕获电机7"))
-        item = self.tableWidget_2.verticalHeaderItem(7)
         item.setText(self._translate("MainWindow", "关节电机1"))
-        item = self.tableWidget_2.verticalHeaderItem(8)
+        item = self.tableWidget_2.verticalHeaderItem(1)
         item.setText(self._translate("MainWindow", "关节电机2"))
-        item = self.tableWidget_2.verticalHeaderItem(9)
+        item = self.tableWidget_2.verticalHeaderItem(2)
         item.setText(self._translate("MainWindow", "关节电机3"))
-        item = self.tableWidget_2.verticalHeaderItem(10)
+        item = self.tableWidget_2.verticalHeaderItem(3)
         item.setText(self._translate("MainWindow", "关节电机4"))
-        item = self.tableWidget_2.verticalHeaderItem(11)
+        item = self.tableWidget_2.verticalHeaderItem(4)
         item.setText(self._translate("MainWindow", "关节电机5"))
-        item = self.tableWidget_2.verticalHeaderItem(12)
+        item = self.tableWidget_2.verticalHeaderItem(5)
         item.setText(self._translate("MainWindow", "关节电机6"))
-        item = self.tableWidget_2.verticalHeaderItem(13)
+        item = self.tableWidget_2.verticalHeaderItem(6)
         item.setText(self._translate("MainWindow", "关节电机7"))
+        item = self.tableWidget_2.verticalHeaderItem(7)
+        item.setText(self._translate("MainWindow", "捕获电机1"))
+        item = self.tableWidget_2.verticalHeaderItem(8)
+        item.setText(self._translate("MainWindow", "捕获电机2"))
+        item = self.tableWidget_2.verticalHeaderItem(9)
+        item.setText(self._translate("MainWindow", "捕获电机3"))
+        item = self.tableWidget_2.verticalHeaderItem(10)
+        item.setText(self._translate("MainWindow", "捕获电机4"))
+        item = self.tableWidget_2.verticalHeaderItem(11)
+        item.setText(self._translate("MainWindow", "捕获电机5"))
+        item = self.tableWidget_2.verticalHeaderItem(12)
+        item.setText(self._translate("MainWindow", "捕获电机6"))
+        item = self.tableWidget_2.verticalHeaderItem(13)
+        item.setText(self._translate("MainWindow", "捕获电机7"))
         item = self.tableWidget_2.horizontalHeaderItem(0)
         item.setText(self._translate("MainWindow", "电机编号"))
         item = self.tableWidget_2.horizontalHeaderItem(1)
@@ -2023,22 +2030,53 @@ class Ui_MainWindow(object):
         self.set_var()
 
     def set_var(self):
+        self.comboBox.addItems(["关节电机:a1","关节电机:a2","关节电机:a3","关节电机:a4","关节电机:a5","关节电机:a6","关节电机:a7",
+                                "关节电机:b1","关节电机:b2","关节电机:b3","关节电机:b4","关节电机:b5","关节电机:b6","关节电机:b7"])
+        for i in range(1,15):
+            if i<=7:
+                index=f"a{i}"
+            else:
+                index=f"b{i-7}"
+            item_data = QtWidgets.QTableWidgetItem(index)
+            self.tableWidget_2.setItem(i-1,0,item_data)
+
         self.open_camera_flag = False
         self.connect_flag = False
+        self.single_enable_flag = False
         # 初始化连接
         self.tc3 = TwinCat3_ADSserver()
 
     def add_adsvars(self):
         # 添加要监控的变量
         for i in range(7):
-            self.tc3.add_variable(f"MAIN.axis_pos[{i+1}]", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"MAIN.axis[{i+1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
+            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
+            #self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActTorque", pyads.PLCTYPE_LREAL, self.value_changed) 力矩不需要
+            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name ,value):
         pattern = r'\d+'
+        types = name.split(".")[-1]
         row = int(re.findall(pattern, name)[0])
-        item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
-        self.tableWidget_2.setItem(row-1,3,item_data)
+        types = name.split(".")[-1]
+        if types == "Moving":
+            if value:
+                astr = "运行状态"
+            else:
+                astr = "停止状态"
+            item_data = QtWidgets.QTableWidgetItem(astr)
+            self.tableWidget_2.setItem(row-1,1,item_data)
+        elif types == "ActVelo":
+            item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
+            self.tableWidget_2.setItem(row-1,2,item_data)
+        elif types == "ActPos":
+            item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
+            self.tableWidget_2.setItem(row-1,3,item_data)
+        elif types == "ErrorCode":
+            item_data = QtWidgets.QTableWidgetItem(str(value))
+            self.tableWidget_2.setItem(row-1,4,item_data)
 
     def update_image(self, image):
         # Update the image_label with a new image
@@ -2055,7 +2093,10 @@ class Ui_MainWindow(object):
             self.tc3.connect()
             print("已连接twincat")
             self.add_adsvars()
-            self.tc3.variable_updated_signal.connect(self.value_changed)
+            self.tc3.moving_signal.connect(self.value_changed)
+            self.tc3.pos_signal.connect(self.value_changed)
+            self.tc3.velo_signal.connect(self.value_changed)
+            self.tc3.error_signal.connect(self.value_changed)
             self.tc3.start_monitoring()
             self.connect_flag = True
             self.pushButton_6.setText(self._translate("MainWindow", "关闭"))
@@ -2075,10 +2116,39 @@ class Ui_MainWindow(object):
             self.open_camera_flag = True
             self.pushButton_8.setText("关闭相机")
 
+    def single_enable(self):
+        if self.single_enable_flag:
+            select_axis = self.comboBox.currentIndex() + 1
+            self.tc3.write_by_name(f"MAIN.single_enable[{select_axis}]", False, pyads.PLCTYPE_BOOL)
+        else:
+            # 第几个轴
+            select_axis = self.comboBox.currentIndex() + 1
+            self.tc3.write_by_name(f"MAIN.single_enable[{select_axis}]", True, pyads.PLCTYPE_BOOL)
 
+    def single_forward(self):
+        self.tc3.write_by_name(f"MAIN.select_mode", 1, pyads.PLCTYPE_INT)
+    
+    def single_reverse(self):
+        self.tc3.write_by_name(f"MAIN.select_mode", 2, pyads.PLCTYPE_INT)
 
+    def single_stop(self):
+        self.tc3.write_by_name(f"MAIN.select_mode", 3, pyads.PLCTYPE_INT)
 
+    def single_reset(self):
+        self.tc3.write_by_name(f"MAIN.select_mode", 4, pyads.PLCTYPE_INT)
 
+    def single_zero(self):
+        self.tc3.write_by_name(f"MAIN.select_mode", 5, pyads.PLCTYPE_INT)
+
+    def single_move(self):
+        if self.lineEdit_14.text()=="" or self.lineEdit_14.text()=="":
+            print("请输入速度和位置")
+        else:
+            setpos = float(self.lineEdit_14.text())
+            setvelo = float(self.lineEdit_15.text())
+            self.tc3.write_by_name(f"MAIN.setpos", setpos, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"MAIN.setvelo", setvelo, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"MAIN.select_mode", 6, pyads.PLCTYPE_INT)
     
 
     
