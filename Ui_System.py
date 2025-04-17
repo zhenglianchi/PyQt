@@ -211,6 +211,7 @@ class Ui_MainWindow(object):
 " border-right: 2px solid #a3a3a3;  /* 右边边框 */\n"
 "    border-bottom: 2px solid #a3a3a3; /* 下边边框 */\n"
 "margin-top: 0px;")
+        self.pushButton_2.clicked.connect(self.motor_enable)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout_3.addWidget(self.pushButton_2)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -2046,6 +2047,7 @@ class Ui_MainWindow(object):
         self.open_servo_flag = False
         self.connect_flag = False
         self.single_enable_flag = False
+        self.motor_enable_flag = False
         # 初始化连接
         self.tc3 = TwinCat3_ADSserver()
 
@@ -2065,7 +2067,6 @@ class Ui_MainWindow(object):
         pattern = r'\d+'
         types = name.split(".")[-1]
         row = int(re.findall(pattern, name)[0])
-        types = name.split(".")[-1]
         if types == "Moving":
             if value:
                 astr = "运行状态"
@@ -2108,11 +2109,13 @@ class Ui_MainWindow(object):
         if self.open_servo_flag:
             print("停止跟踪")
             self.servo.stop()
+            self.open_servo_flag = False
         else:
             print("开始跟踪")
             self.servo = VisualServoThread(self, 0.6)
             self.servo.update_pose_signal.connect(self.write_delta)
-            self.servo.start()
+            self.servo.start_servo()
+            self.open_servo_flag = True
 
     def open_connect(self):
         if self.connect_flag:
@@ -2129,6 +2132,12 @@ class Ui_MainWindow(object):
             self.tc3.pos_signal.connect(self.value_changed)
             self.tc3.velo_signal.connect(self.value_changed)
             self.tc3.error_signal.connect(self.value_changed)
+            self.tc3.eeposx_signal.connect(self.value_changed)
+            self.tc3.eeposy_signal.connect(self.value_changed)
+            self.tc3.eeposz_signal.connect(self.value_changed)
+            self.tc3.eeposrx_signal.connect(self.value_changed)
+            self.tc3.eeposry_signal.connect(self.value_changed)
+            self.tc3.eeposrz_signal.connect(self.value_changed)
             self.tc3.start_monitoring()
             self.connect_flag = True
             self.pushButton_6.setText(self._translate("MainWindow", "关闭"))
@@ -2147,6 +2156,16 @@ class Ui_MainWindow(object):
             self.thread.start_camera()
             self.open_camera_flag = True
             self.pushButton_8.setText("关闭相机")
+
+    def motor_enable(self):
+        if self.motor_enable_flag:
+            self.pushButton_2.setText("开启电机")
+            self.tc3.write_by_name(f"MAIN.Enable_Open", False, pyads.PLCTYPE_BOOL)
+            self.motor_enable_flag = False
+        else:
+            self.pushButton_2.setText("关闭电机")
+            self.tc3.write_by_name(f"MAIN.Enable_Open", True, pyads.PLCTYPE_BOOL)
+            self.motor_enable_flag = True
 
     def single_enable(self):
         if self.single_enable_flag:

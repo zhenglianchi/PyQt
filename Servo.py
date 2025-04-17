@@ -131,5 +131,6 @@ class VisualServoThread(QThread):
         self._run_flag = False
         self.wait()
 
-    def start(self):
+    def start_servo(self):
         self._run_flag = True
+        self.start()
