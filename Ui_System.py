@@ -4,6 +4,7 @@ from ads import TwinCat3_ADSserver
 import pyads
 import re
 from video import VideoThread
+from Servo import VisualServoThread
 
 
 
@@ -723,6 +724,7 @@ class Ui_MainWindow(object):
 "    border-bottom: 2px solid #a3a3a3; /* 下边边框 */\n"
 "margin-top: 0px;")
         self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_4.clicked.connect(self.open_servo)
         self.horizontalLayout_22.addWidget(self.pushButton_4)
         spacerItem17 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_22.addItem(spacerItem17)
@@ -2041,6 +2043,7 @@ class Ui_MainWindow(object):
             self.tableWidget_2.setItem(i-1,0,item_data)
 
         self.open_camera_flag = False
+        self.open_servo_flag = False
         self.connect_flag = False
         self.single_enable_flag = False
         # 初始化连接
@@ -2054,6 +2057,8 @@ class Ui_MainWindow(object):
             self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             #self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActTorque", pyads.PLCTYPE_LREAL, self.value_changed) 力矩不需要
             self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
+        for i in range(6):
+            self.tc3.add_variable(f"MAIN.eepos[{i+1}]", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name ,value):
@@ -2077,10 +2082,37 @@ class Ui_MainWindow(object):
         elif types == "ErrorCode":
             item_data = QtWidgets.QTableWidgetItem(str(value))
             self.tableWidget_2.setItem(row-1,4,item_data)
+        elif types == "eepos[1]":
+            self.lineEdit_24.setText(str(value))
+        elif types == "eepos[2]":
+            self.lineEdit_25.setText(str(value))
+        elif types == "eepos[3]":
+            self.lineEdit_26.setText(str(value))
+        elif types == "eepos[4]":
+            self.lineEdit_27.setText(str(value))
+        elif types == "eepos[5]":
+            self.lineEdit_28.setText(str(value))
+        elif types == "eepos[6]":
+            self.lineEdit_29.setText(str(value))
+
 
     def update_image(self, image):
         # Update the image_label with a new image
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
+
+    def write_delta(self, delta_world):
+        for i in range(6):
+            self.tc3.write_by_name(f"MAIN.delta[{i+1}]", delta_world[i], pyads.PLCTYPE_LREAL)
+
+    def open_servo(self):
+        if self.open_servo_flag:
+            print("停止跟踪")
+            self.servo.stop()
+        else:
+            print("开始跟踪")
+            self.servo = VisualServoThread(self, 0.6)
+            self.servo.update_pose_signal.connect(self.write_delta)
+            self.servo.start()
 
     def open_connect(self):
         if self.connect_flag:

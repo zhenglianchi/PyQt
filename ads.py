@@ -9,6 +9,12 @@ class TwinCat3_ADSserver(QThread):
     velo_signal = pyqtSignal(str, float)
     pos_signal = pyqtSignal(str, float)
     error_signal = pyqtSignal(str, int)
+    eeposx_signal = pyqtSignal(str, float)
+    eeposy_signal = pyqtSignal(str, float)
+    eeposz_signal = pyqtSignal(str, float)
+    eeposrx_signal = pyqtSignal(str, float)
+    eeposry_signal = pyqtSignal(str, float)
+    eeposrz_signal = pyqtSignal(str, float)
 
     def __init__(self, ip="127.0.0.1.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
         '''
@@ -18,7 +24,6 @@ class TwinCat3_ADSserver(QThread):
         super().__init__()
         self.ip = ip
         self.amsNetIdTarget = amsNetIdTarget
-        self.plc = pyads.Connection(ip, pyads.PORT_TC3PLC1)
         # 线程相关属性
         self.running = False
         self.lock = threading.Lock()
@@ -71,6 +76,18 @@ class TwinCat3_ADSserver(QThread):
                         self.pos_signal.emit(name, value)
                     elif types == "ErrorCode":
                         self.error_signal.emit(name, value)
+                    elif types == "eepos[1]":
+                        self.eeposx_signal.emit(name, value)
+                    elif types == "eepos[2]":
+                        self.eeposy_signal.emit(name, value)
+                    elif types == "eepos[3]":
+                        self.eeposz_signal.emit(name, value)
+                    elif types == "eepos[4]":
+                        self.eeposrx_signal.emit(name, value)
+                    elif types == "eepos[5]":
+                        self.eeposry_signal.emit(name, value)
+                    elif types == "eepos[6]":
+                        self.eeposrz_signal.emit(name, value)
                     else:
                         print("读取到不存在的变量")
                 
@@ -86,6 +103,7 @@ class TwinCat3_ADSserver(QThread):
 
     def connect(self):
         """连接到TwinCAT3 PLC"""
+        self.plc = pyads.Connection(self.ip, self.amsNetIdTarget)
         self.plc.open()
         print("已连接到TwinCAT3 PLC")
 

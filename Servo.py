@@ -106,14 +106,14 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
 
 
 class VisualServoThread(QThread):
-    update_pose_signal = pyqtSignal(list, list)
+    update_pose_signal = pyqtSignal(list)
 
-    def __init__(self, pose, video_thread, lambda_gain):
+    def __init__(self, ui , lambda_gain):
         super().__init__()
-        self.pose = pose
-        self.video_thread = video_thread
+        self.ui = ui
+        self.video_thread = self.ui.thread
         self.lambda_gain = lambda_gain
-        self._run_flag = True
+        self._run_flag = None
 
     def run(self):
         while self._run_flag:
@@ -121,10 +121,15 @@ class VisualServoThread(QThread):
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
                 Z = self.video_thread.Z
-                cam_delta, world_delta = servo(self.pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
-                self.update_pose_signal.emit(cam_delta.tolist(), world_delta.tolist())
+                x,y,z,rx,ry,rz = float(self.ui.lineEdit_24.text()),float(self.ui.lineEdit_25.text()),float(self.ui.lineEdit_26.text()),float(self.ui.lineEdit_27.text()),float(self.ui.lineEdit_28.text()),float(self.ui.lineEdit_29.text())
+                curr_pose = [x,y,z,rx,ry,rz]
+                cam_delta, world_delta = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
+                self.update_pose_signal.emit(world_delta.tolist())
             time.sleep(0.1)  # 避免CPU占用过高
 
     def stop(self):
         self._run_flag = False
         self.wait()
+
+    def start(self):
+        self._run_flag = True
