@@ -2169,27 +2169,30 @@ class Ui_MainWindow(object):
 
     def single_enable(self):
         if self.single_enable_flag:
-            select_axis = self.comboBox.currentIndex() + 1
-            self.tc3.write_by_name(f"MAIN.single_enable[{select_axis}]", False, pyads.PLCTYPE_BOOL)
+            select_axis = int(self.comboBox.currentIndex() + 1)
+            self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
+            self.tc3.write_by_name(f"MAIN.Enable_Open", False, pyads.PLCTYPE_BOOL)
         else:
             # 第几个轴
             select_axis = self.comboBox.currentIndex() + 1
-            self.tc3.write_by_name(f"MAIN.single_enable[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
+            self.tc3.write_by_name(f"MAIN.Enable_Open", True, pyads.PLCTYPE_BOOL)
+            self.single_enable_flag = True
 
     def single_forward(self):
-        self.tc3.write_by_name(f"MAIN.select_mode", 1, pyads.PLCTYPE_INT)
+        self.tc3.write_by_name(f"MAIN.Positive_Open", True, pyads.PLCTYPE_BOOL)
     
     def single_reverse(self):
-        self.tc3.write_by_name(f"MAIN.select_mode", 2, pyads.PLCTYPE_INT)
+        self.tc3.write_by_name(f"MAIN.Negative_Open", True, pyads.PLCTYPE_BOOL)
 
     def single_stop(self):
-        self.tc3.write_by_name(f"MAIN.select_mode", 3, pyads.PLCTYPE_INT)
+        self.tc3.write_by_name(f"MAIN.stop_flag", True, pyads.PLCTYPE_BOOL)
 
     def single_reset(self):
-        self.tc3.write_by_name(f"MAIN.select_mode", 4, pyads.PLCTYPE_INT)
+        self.tc3.write_by_name(f"MAIN.reset_flag", True, pyads.PLCTYPE_BOOL)
 
     def single_zero(self):
-        self.tc3.write_by_name(f"MAIN.select_mode", 5, pyads.PLCTYPE_INT)
+        self.tc3.write_by_name(f"MAIN.home_flag", True, pyads.PLCTYPE_BOOL)
 
     def single_move(self):
         if self.lineEdit_14.text()=="" or self.lineEdit_14.text()=="":
@@ -2197,9 +2200,9 @@ class Ui_MainWindow(object):
         else:
             setpos = float(self.lineEdit_14.text())
             setvelo = float(self.lineEdit_15.text())
-            self.tc3.write_by_name(f"MAIN.setpos", setpos, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"MAIN.setvelo", setvelo, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"MAIN.select_mode", 6, pyads.PLCTYPE_INT)
+            self.tc3.write_by_name(f"MAIN.abs_Position", setpos, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"MAIN.abs_Velocity", setvelo, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"MAIN.abs_flag", True, pyads.PLCTYPE_BOOL)
     
 
     
