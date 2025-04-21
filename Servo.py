@@ -121,7 +121,7 @@ class VisualServoThread(QThread):
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
                 Z = self.video_thread.Z
-                x,y,z,rx,ry,rz = float(self.ui.lineEdit_24.text()),float(self.ui.lineEdit_25.text()),float(self.ui.lineEdit_26.text()),float(self.ui.lineEdit_27.text()),float(self.ui.lineEdit_28.text()),float(self.ui.lineEdit_29.text())
+                x,y,z,rx,ry,rz = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text()),float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
                 curr_pose = [x,y,z,rx,ry,rz]
                 cam_delta, world_delta = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
