@@ -5,7 +5,7 @@ import pyads
 import re
 from video import VideoThread
 from Servo import VisualServoThread
-
+from PyQt5.QtWidgets import QMessageBox
 
 class Control:
     def __init__(self, ui):
@@ -66,38 +66,41 @@ class Control:
             self.tc3.variables={}
             self.tc3.close()
         else:
-            self.connect_flag = True
-            self.button_connect.setText("关闭")
-            self.connect_led.setStyleSheet("""
-            background-color: rgb(88, 214, 92);
-            border-radius: 20px; 
-            border: 1px solid gray;
-            margin-top: 0px;
-            """)
-            self.button_connect.setStyleSheet("""
-            background-color: gray;
-            color: black;
-            padding: 5px 10px;
-            border-left: 0px;
-            border-top: 0px;
-            border-right: 2px solid #a3a3a3;
-            border-bottom: 2px solid #a3a3a3;
-            margin-top: 0px;
-        """)
-            self.addLogs("Twincat连接开启")
-            self.tc3.connect()
-            self.add_adsvars()
-            self.tc3.moving_signal.connect(self.value_changed)
-            self.tc3.pos_signal.connect(self.value_changed)
-            self.tc3.velo_signal.connect(self.value_changed)
-            self.tc3.error_signal.connect(self.value_changed)
-            self.tc3.eeposx_signal.connect(self.value_changed)
-            self.tc3.eeposy_signal.connect(self.value_changed)
-            self.tc3.eeposz_signal.connect(self.value_changed)
-            self.tc3.eeposrx_signal.connect(self.value_changed)
-            self.tc3.eeposry_signal.connect(self.value_changed)
-            self.tc3.eeposrz_signal.connect(self.value_changed)
-            self.tc3.start_monitoring()
+            try:
+                self.connect_flag = True
+                self.button_connect.setText("关闭")
+                self.addLogs("Twincat连接开启")
+                self.tc3.connect()
+                self.add_adsvars()
+                self.tc3.moving_signal.connect(self.value_changed)
+                self.tc3.pos_signal.connect(self.value_changed)
+                self.tc3.velo_signal.connect(self.value_changed)
+                self.tc3.error_signal.connect(self.value_changed)
+                self.tc3.eeposx_signal.connect(self.value_changed)
+                self.tc3.eeposy_signal.connect(self.value_changed)
+                self.tc3.eeposz_signal.connect(self.value_changed)
+                self.tc3.eeposrx_signal.connect(self.value_changed)
+                self.tc3.eeposry_signal.connect(self.value_changed)
+                self.tc3.eeposrz_signal.connect(self.value_changed)
+                self.tc3.start_monitoring()
+                self.connect_led.setStyleSheet("""
+                background-color: rgb(88, 214, 92);
+                border-radius: 20px; 
+                border: 1px solid gray;
+                margin-top: 0px;
+                """)
+                self.button_connect.setStyleSheet("""
+                background-color: gray;
+                color: black;
+                padding: 5px 10px;
+                border-left: 0px;
+                border-top: 0px;
+                border-right: 2px solid #a3a3a3;
+                border-bottom: 2px solid #a3a3a3;
+                margin-top: 0px;
+                """)
+            except Exception as e:
+                self.addLogs(str(e))
 
     def open_camera(self):
         if self.open_camera_flag:
@@ -117,22 +120,26 @@ class Control:
             self.thread.stop_camera()
             self.VisionPictureRGB_2.setPixmap(QPixmap(""))
         else:
-            self.open_camera_flag = True
-            self.button_camera.setText("关闭相机")
-            self.button_camera.setStyleSheet("""
-            background-color: gray;
-            color: black;
-            padding: 5px 10px;
-            border-left: 0px;
-            border-top: 0px;
-            border-right: 2px solid #a3a3a3;
-            border-bottom: 2px solid #a3a3a3;
-            margin-top: 0px;
-        """)
-            self.addLogs("相机开启")
-            self.thread = VideoThread()
-            self.thread.change_pixmap_signal.connect(self.update_image)
-            self.thread.start_camera()
+            self.addLogs("相机开启中")
+            try:
+                self.open_camera_flag = True
+                self.button_camera.setText("关闭相机")
+                self.button_camera.setStyleSheet("""
+                background-color: gray;
+                color: black;
+                padding: 5px 10px;
+                border-left: 0px;
+                border-top: 0px;
+                border-right: 2px solid #a3a3a3;
+                border-bottom: 2px solid #a3a3a3;
+                margin-top: 0px;
+            """)
+                self.addLogs("相机开启")
+                self.thread = VideoThread()
+                self.thread.change_pixmap_signal.connect(self.update_image)
+                self.thread.start_camera()
+            except Exception as e:
+                self.addLogs(str(e))
 
 
     def open_motor(self):
@@ -153,21 +160,24 @@ class Control:
             self.tc3.write_by_name(f"MAIN.Enable_Open", False, pyads.PLCTYPE_BOOL)
             self.box_motor.setReadOnly(False)
         else:
-            self.open_motor_flag = True
-            self.button_motor.setText("关闭电机")
-            self.button_motor.setStyleSheet("""
-            background-color: gray;
-            color: black;
-            padding: 5px 10px;
-            border-left: 0px;
-            border-top: 0px;
-            border-right: 2px solid #a3a3a3;
-            border-bottom: 2px solid #a3a3a3;
-            margin-top: 0px;
-        """)
-            self.addLogs("电机开启")
-            self.tc3.write_by_name(f"MAIN.Enable_Open", True, pyads.PLCTYPE_BOOL)
-            self.box_motor.setReadOnly(True)
+            try:
+                self.open_motor_flag = True
+                self.button_motor.setText("关闭电机")
+                self.button_motor.setStyleSheet("""
+                background-color: gray;
+                color: black;
+                padding: 5px 10px;
+                border-left: 0px;
+                border-top: 0px;
+                border-right: 2px solid #a3a3a3;
+                border-bottom: 2px solid #a3a3a3;
+                margin-top: 0px;
+            """)
+                self.addLogs("电机开启")
+                self.tc3.write_by_name(f"MAIN.Enable_Open", True, pyads.PLCTYPE_BOOL)
+                self.box_motor.setReadOnly(True)
+            except Exception as e:
+                self.addLogs(str(e))
 
 
 
@@ -234,34 +244,36 @@ class Control:
             self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
             self.tc3.write_by_name(f"MAIN.Enable_Open[{select_axis}]", False, pyads.PLCTYPE_BOOL)
         else:
-            # 检查是否选择了电机
-            select_axis = self.box_motor.currentIndex()
-            if select_axis == 0:
-                self.addLogs("请先选择电机")
-                return
-            self.open_start_flag = True
-            self.box_motor.setEnabled(False)
-            self.button_start.setText("关闭")
-            self.start_led.setStyleSheet("""
-            background-color: rgb(88, 214, 92);
-            border-radius: 20px; 
-            border: 1px solid gray;
-            margin-top: 0px;
+            try:
+                # 检查是否选择了电机
+                select_axis = self.box_motor.currentIndex()
+                if select_axis == 0:
+                    self.addLogs("请先选择电机")
+                    return
+                self.open_start_flag = True
+                self.box_motor.setEnabled(False)
+                self.button_start.setText("关闭")
+                self.addLogs(f"{select_axis}单机调试启动")
+                self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
+                self.tc3.write_by_name(f"MAIN.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+                self.start_led.setStyleSheet("""
+                background-color: rgb(88, 214, 92);
+                border-radius: 20px; 
+                border: 1px solid gray;
+                margin-top: 0px;
+                """)
+                self.button_start.setStyleSheet("""
+                background-color: gray;
+                color: black;
+                padding: 5px 10px;
+                border-left: 0px;
+                border-top: 0px;
+                border-right: 2px solid #a3a3a3;
+                border-bottom: 2px solid #a3a3a3;
+                margin-top: 0px;
             """)
-            self.button_start.setStyleSheet("""
-            background-color: gray;
-            color: black;
-            padding: 5px 10px;
-            border-left: 0px;
-            border-top: 0px;
-            border-right: 2px solid #a3a3a3;
-            border-bottom: 2px solid #a3a3a3;
-            margin-top: 0px;
-        """)
-            self.addLogs(f"{select_axis}单机调试启动")
-            self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
-            self.tc3.write_by_name(f"MAIN.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
-
+            except Exception as e:
+                self.addLogs(str(e))
 
 
     def open_forward(self):
@@ -284,7 +296,12 @@ class Control:
             self.addLogs("电机正转")
             select_axis = self.box_motor.currentIndex()
         self.tc3.write_by_name(f"MAIN.Positive_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
-            
+        self.button_reverse.setEnabled(False)
+        self.button_move.setEnabled(False)
+        self.button_zero.setEnabled(False)
+        self.button_reset.setEnabled(False)
+        self.button_start.setEnabled(False)
+
     def open_reverse(self):
         if self.open_reverse_flag:
             if not self.open_start_flag:
@@ -305,6 +322,11 @@ class Control:
             self.addLogs("电机反转")
             select_axis = self.box_motor.currentIndex()
         self.tc3.write_by_name(f"MAIN.Negative_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.button_forward.setEnabled(False)
+        self.button_move.setEnabled(False)
+        self.button_zero.setEnabled(False)
+        self.button_reset.setEnabled(False)
+        self.button_start.setEnabled(False)
             
     def open_stop(self):
         if self.open_stop_flag:
@@ -383,6 +405,11 @@ class Control:
             self.addLogs("电机停止")
             select_axis = self.box_motor.currentIndex()
         self.tc3.write_by_name(f"MAIN.stop_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.button_forward.setEnabled(True)
+        self.button_move.setEnabled(True)
+        self.button_zero.setEnabled(True)
+        self.button_reset.setEnabled(True)
+        self.button_start.setEnabled(True)
 
     def open_reset(self):
         if self.open_reset_flag:
