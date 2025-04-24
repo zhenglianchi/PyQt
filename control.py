@@ -79,9 +79,6 @@ class Control:
                 self.tc3.eeposx_signal.connect(self.value_changed)
                 self.tc3.eeposy_signal.connect(self.value_changed)
                 self.tc3.eeposz_signal.connect(self.value_changed)
-                self.tc3.eeposrx_signal.connect(self.value_changed)
-                self.tc3.eeposry_signal.connect(self.value_changed)
-                self.tc3.eeposrz_signal.connect(self.value_changed)
                 self.tc3.start_monitoring()
                 self.connect_led.setStyleSheet("""
                 background-color: rgb(88, 214, 92);
@@ -241,8 +238,8 @@ class Control:
         """)
             self.addLogs("单机调试关闭")
             select_axis = int(self.box_motor.currentIndex())
-            self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
-            self.tc3.write_by_name(f"MAIN.Enable_Open[{select_axis}]", False, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Singal.nSelect", select_axis, pyads.PLCTYPE_INT)
+            self.tc3.write_by_name(f"Singal.Enable_Open[{select_axis}]", False, pyads.PLCTYPE_BOOL)
         else:
             try:
                 # 检查是否选择了电机
@@ -254,8 +251,8 @@ class Control:
                 self.box_motor.setEnabled(False)
                 self.button_start.setText("关闭")
                 self.addLogs(f"{select_axis}单机调试启动")
-                self.tc3.write_by_name(f"MAIN.nSelect", select_axis, pyads.PLCTYPE_INT)
-                self.tc3.write_by_name(f"MAIN.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+                self.tc3.write_by_name(f"Singal.nSelect", select_axis, pyads.PLCTYPE_INT)
+                self.tc3.write_by_name(f"Singal.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
                 self.start_led.setStyleSheet("""
                 background-color: rgb(88, 214, 92);
                 border-radius: 20px; 
@@ -295,7 +292,7 @@ class Control:
         """)
             self.addLogs("电机正转")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"MAIN.Positive_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Singal.Positive_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_reverse.setEnabled(False)
         self.button_move.setEnabled(False)
         self.button_zero.setEnabled(False)
@@ -321,7 +318,7 @@ class Control:
         """)
             self.addLogs("电机反转")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"MAIN.Negative_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Singal.Negative_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_forward.setEnabled(False)
         self.button_move.setEnabled(False)
         self.button_zero.setEnabled(False)
@@ -404,7 +401,7 @@ class Control:
             """)
             self.addLogs("电机停止")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"MAIN.stop_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Singal.stop_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_forward.setEnabled(True)
         self.button_move.setEnabled(True)
         self.button_zero.setEnabled(True)
@@ -430,7 +427,7 @@ class Control:
         """)
             self.addLogs("电机复位")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"MAIN.reset_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Singal.reset_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
 
 
     def open_zero(self):
@@ -452,7 +449,7 @@ class Control:
         """)
             self.addLogs("电机回零")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"MAIN.home_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Singal.home_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
 
 
     def open_move(self):
@@ -495,9 +492,9 @@ class Control:
             select_axis = self.box_motor.currentIndex()
             setpos = float(self.p_edit.text())
             setvelo = float(self.v_edit.text())
-            self.tc3.write_by_name(f"MAIN.abs_Position[{select_axis}]", setpos, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"MAIN.abs_Velocity[{select_axis}]", setvelo, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"MAIN.abs_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Singal.abs_Position[{select_axis}]", setpos, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Singal.abs_Velocity[{select_axis}]", setvelo, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Singal.abs_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
             self.button_move.setStyleSheet("""
             background-color: gray;
             color: black;
@@ -573,6 +570,8 @@ class Control:
             self.addLogs("捕获流程结束")
             self.servo.stop()
             self.open_servo_flag = False
+            self.set_button_style(self.button3, self.open_servo_flag)
+            self.set_led_style(self.led3, self.open_servo_flag)
         else:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
@@ -640,47 +639,56 @@ class Control:
     def add_adsvars(self):
         # 添加要监控的变量
         for i in range(7):
-            self.tc3.add_variable(f"MAIN.axis[{i+1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
-            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
-            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
-            #self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ActTorque", pyads.PLCTYPE_LREAL, self.value_changed) 力矩不需要
-            self.tc3.add_variable(f"MAIN.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
-        for i in range(6):
-            self.tc3.add_variable(f"MAIN.eepos[{i+1}]", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i+1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
+
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name ,value):
         pattern = r'\d+'
         types = name.split(".")[-1]
-        row = int(re.findall(pattern, name)[0])
-        if types == "Moving":
-            if value:
-                astr = "运行状态"
-            else:
-                astr = "停止状态"
-            item_data = QtWidgets.QTableWidgetItem(astr)
-            self.table.setItem(row-1,1,item_data)
-        elif types == "ActVelo":
-            item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
-            self.table.setItem(row-1,2,item_data)
-        elif types == "ActPos":
-            item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
-            self.table.setItem(row-1,3,item_data)
-        elif types == "ErrorCode":
-            item_data = QtWidgets.QTableWidgetItem(str(value))
-            self.table.setItem(row-1,4,item_data)
-        elif types == "eepos[1]":
-            self.line_x.setText(str(value))
-        elif types == "eepos[2]":
-            self.line_y.setText(str(value))
-        elif types == "eepos[3]":
-            self.line_z.setText(str(value))
-        elif types == "eepos[4]":
-            self.line_Rr.setText(str(value))
-        elif types == "eepos[5]":
-            self.line_Rp.setText(str(value))
-        elif types == "eepos[6]":
-            self.line_Ry.setText(str(value))
+        try:
+            row = int(re.findall(pattern, name)[0])
+            if types == "Moving":
+                if value:
+                    astr = "运行状态"
+                else:
+                    astr = "停止状态"
+                item_data = QtWidgets.QTableWidgetItem(astr)
+                self.table.setItem(row-1,1,item_data)
+            elif types == "ActVelo":
+                item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
+                self.table.setItem(row-1,2,item_data)
+            elif types == "ActPos":
+                item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
+                self.table.setItem(row-1,3,item_data)
+            elif types == "ErrorCode":
+                item_data = QtWidgets.QTableWidgetItem(str(value))
+                self.table.setItem(row-1,4,item_data)
+        except:
+            if types == "ReaTwinX":
+                self.line_x.setText(str(value))
+            elif types == "ReaTwinY":
+                self.line_y.setText(str(value))
+            elif types == "ReaTwinZ":
+                self.line_z.setText(str(value))
+            elif types == "ReaTwinRX":
+                self.line_Rr.setText(str(value))
+            elif types == "ReaTwinRY":
+                self.line_Rp.setText(str(value))
+            elif types == "ReaTwinRZ":
+                self.line_Ry.setText(str(value))
+        
+        
+
 
 
     def update_image(self, image):
@@ -688,5 +696,6 @@ class Control:
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
 
     def write_delta(self, delta_world):
-        for i in range(6):
-            self.tc3.write_by_name(f"MAIN.delta[{i+1}]", delta_world[i], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)

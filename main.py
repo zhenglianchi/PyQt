@@ -14,7 +14,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow): #这里也要记得改
         self.logText.setReadOnly(True)
         self.box_motor.addItem("请选择电机")
         self.box_motor.addItems(["关节电机:a1","关节电机:a2","关节电机:a3","关节电机:a4","关节电机:a5","关节电机:a6","关节电机:a7",
-                                "关节电机:b1","关节电机:b2","关节电机:b3","关节电机:b4","关节电机:b5","关节电机:b6","关节电机:b7"])
+                                "机构电机:b1","机构电机:b2","机构电机:b3","机构电机:b4","机构电机:b5","机构电机:b6","机构电机:b7"])
         
         for i in range(1,15):
             if i<=7:

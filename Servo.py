@@ -121,10 +121,12 @@ class VisualServoThread(QThread):
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
                 Z = self.video_thread.Z
-                x,y,z,rx,ry,rz = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text()),float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
+                rx,ry,rz = 0,0,0
+                x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
                 curr_pose = [x,y,z,rx,ry,rz]
                 cam_delta, world_delta = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
+
             time.sleep(0.1)  # 避免CPU占用过高
 
     def stop(self):
