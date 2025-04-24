@@ -3,6 +3,7 @@ import threading
 import time
 from PyQt5.QtCore import QThread, pyqtSignal
 
+
 class TwinCat3_ADSserver(QThread):
     # Signal to send data back to the main thread
     moving_signal = pyqtSignal(str, bool)
@@ -35,7 +36,7 @@ class TwinCat3_ADSserver(QThread):
         type var_type: pyads.PLCTYPE_xxx; example:pyads.PLCTYPE_INT
         '''
         return self.plc.read_by_name(name, var_type)
-    
+
     def write_by_name(self, name, value, var_type):
         '''
         type name: str
@@ -90,10 +91,10 @@ class TwinCat3_ADSserver(QThread):
                         self.eeposrz_signal.emit(name, value)
                     else:
                         print("读取到不存在的变量")
-                
+
                 # 更新间隔（可根据需要调整）
                 time.sleep(0.01)
-                
+
             except pyads.ADSError as e:
                 print(f"ADS通信错误: {e}")
                 time.sleep(1)  # 出错后等待重试

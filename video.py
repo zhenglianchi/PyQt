@@ -6,7 +6,6 @@ import time
 import cv2
 from ultralytics import YOLO
 
-
 names = {
     0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus',
     6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant',
@@ -47,11 +46,11 @@ class VideoThread(QThread):
                 img_color = np.array(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
 
                 # 调用 YOLO 模型进行检测
-                results = self.yolo(img_color,verbose=False)
+                results = self.yolo(img_color, verbose=False)
                 # 获取检测结果
                 # 每个检测框数据格式为 [x1, y1, x2, y2, confidence, class_id]
                 boxes = results[0].boxes.data.cpu().numpy()
-                
+
                 # 遍历每个检测框
                 for box in boxes:
                     x1, y1, x2, y2, conf, cls_id = box
@@ -66,15 +65,17 @@ class VideoThread(QThread):
                         cv2.putText(img_color, label, (x1, y1 - 10),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-                        detected_points = [(x1,y1),(x2,y1),(x2,y2),(x1,y2)]
+                        detected_points = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)]
                         # 计算所有点的 x 坐标和 y 坐标的平均值
-                        average_x = (detected_points[0][0] + detected_points[1][0] + detected_points[2][0] + detected_points[3][0]) / 4
-                        average_y = (detected_points[0][1] + detected_points[1][1] + detected_points[2][1] + detected_points[3][1]) / 4
+                        average_x = (detected_points[0][0] + detected_points[1][0] + detected_points[2][0] +
+                                     detected_points[3][0]) / 4
+                        average_y = (detected_points[0][1] + detected_points[1][1] + detected_points[2][1] +
+                                     detected_points[3][1]) / 4
 
                         # 得到中心点坐标
                         center_point = (average_x, average_y)
 
-                        target_points = self.resize_and_center_box(detected_points,padding=0)
+                        target_points = self.resize_and_center_box(detected_points, padding=0)
 
                         for point in target_points:
                             cv2.circle(img_color, point, 3, (255, 255, 255), -1)
@@ -84,7 +85,7 @@ class VideoThread(QThread):
 
                         self.uv = uv
                         self.p_star = p_star
-                        self.Z = img_depth[int(center_point[1]), int(center_point[0])]/1000.0
+                        self.Z = img_depth[int(center_point[1]), int(center_point[0])] / 1000.0
 
                 img_color = cv2.resize(img_color, (467, 336))  # 注意参数是 (width, height)
 
@@ -140,6 +141,6 @@ class VideoThread(QThread):
 
         # 等比例放大目标框
         scaled_points = [[int((point[0] - image_center_x) * scale_factor + image_center_x),
-                        int((point[1] - image_center_y) * scale_factor + image_center_y)] for point in moved_points]
+                          int((point[1] - image_center_y) * scale_factor + image_center_y)] for point in moved_points]
 
         return scaled_points

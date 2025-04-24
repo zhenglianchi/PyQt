@@ -1,6 +1,7 @@
 import pyrealsense2 as rs
 import numpy as np
 
+
 class Camera:
     def __init__(self):
         self.pipeline = rs.pipeline()
@@ -13,10 +14,11 @@ class Camera:
 
         color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame = self.get_aligned_images()
 
-        self.f = [color_intrin.fx,color_intrin.fy]
-        self.resolution = [color_intrin.width,color_intrin.height]
+        self.f = [color_intrin.fx, color_intrin.fy]
+        self.resolution = [color_intrin.width, color_intrin.height]
 
-        self.K = self.get_K(fu=self.f[0],fv=self.f[1],rhou=1,rhov=1,u0=self.resolution[0]/2,v0=self.resolution[1]/2)
+        self.K = self.get_K(fu=self.f[0], fv=self.f[1], rhou=1, rhov=1, u0=self.resolution[0] / 2,
+                            v0=self.resolution[1] / 2)
 
     def get_aligned_images(self):
         frames = self.pipeline.wait_for_frames()
@@ -29,23 +31,22 @@ class Camera:
         img_depth = np.asanyarray(aligned_depth_frame.get_data())
 
         return color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame
-    
-    def get_K(self,fu=0.008,fv=0.008,rhou=1e-05,rhov=1e-05,u0=250.0,v0=250.0):
+
+    def get_K(self, fu=0.008, fv=0.008, rhou=1e-05, rhov=1e-05, u0=250.0, v0=250.0):
         # fmt: off
-        K = np.array([[fu / rhou, 0,                   u0],
-                        [ 0,                  fv / rhov, v0],
-                        [ 0,                  0,                    1]
-                        ], dtype=np.float64)
+        K = np.array([[fu / rhou, 0, u0],
+                      [0, fv / rhov, v0],
+                      [0, 0, 1]
+                      ], dtype=np.float64)
         # fmt: on
         return K
-
 
     def stop(self):
         self.pipeline.stop()
 
     def start(self):
         self.pipeline.start(self.config)
-        
+
     def is_opened(self):
         try:
             # Attempt to get a single frame to check if the camera is running
