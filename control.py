@@ -3,16 +3,18 @@ from PyQt5.QtGui import QImage, QPixmap
 from ads import TwinCat3_ADSserver
 import pyads
 import re
+from ForceThread import ForceThread
 from video import VideoThread
 from Servo import VisualServoThread
 from PyQt5.QtWidgets import QMessageBox
+
 
 class Control:
     def __init__(self, ui):
         # 将 ui 的所有控件动态绑定到 self
         for name, widget in ui.__dict__.items():
             setattr(self, name, widget)  # 例如：self.button_camera = ui.button_camera
-        
+
         # 初始化状态标志
         self.open_camera_flag = False
         self.connect_flag = False
@@ -37,9 +39,10 @@ class Control:
         self.open_servo_flag = False
         # 初始化连接
         self.tc3 = TwinCat3_ADSserver()
-        
-        
-     # ---------------------总体控制相关函数-------------------------
+
+        self.ft = None
+
+    # ---------------------总体控制相关函数-------------------------
     def open_connect(self):
         if self.connect_flag:
             self.connect_flag = False
@@ -63,7 +66,7 @@ class Control:
         """)
             self.addLogs("Twincat连接关闭")
             self.tc3.stop_monitoring()
-            self.tc3.variables={}
+            self.tc3.variables = {}
             self.tc3.close()
         else:
             try:
@@ -138,7 +141,6 @@ class Control:
             except Exception as e:
                 self.addLogs(str(e))
 
-
     def open_motor(self):
         if self.open_motor_flag:
             self.open_motor_flag = False
@@ -176,10 +178,8 @@ class Control:
             except Exception as e:
                 self.addLogs(str(e))
 
-
-
     def open_force(self):
-        ip_address=self.ip_edit.text().strip()
+        ip_address = self.ip_edit.text().strip()
         if self.open_force_flag:
             self.open_force_flag = False
             self.button_force.setText("开启六维力")
@@ -196,7 +196,7 @@ class Control:
             self.ip_edit.clear()
             self.addLogs("六维力关闭")
         else:
-            if ip_address=="111.111.111":
+            if ip_address == "192.168.111.20":
                 self.open_force_flag = True
                 self.button_force.setText("关闭六维力")
                 self.button_force.setStyleSheet("""
@@ -209,12 +209,26 @@ class Control:
             border-bottom: 2px solid #a3a3a3;
             margin-top: 0px;
         """)
+                self.forceThread = ForceThread(ip_address)
+                self.forceThread._ft_data.connect(self.updateFT)
+
                 self.addLogs("六维力开启")
             else:
                 print("六维力ip地址错误")
                 self.addLogs("六维力ip地址错误")
+
+    def updateFT(self, ft):
+        self.ft = ft
+        if len(ft) == 6:
+            self.line_Fx.setText(str(ft[0]))
+            self.line_Fy.setText(str(ft[1]))
+            self.line_Fz.setText(str(ft[2]))
+            self.line_Tx.setText(str(ft[3]))
+            self.line_Ty.setText(str(ft[4]))
+            self.line_Tz.setText(str(ft[5]))
+
     # ------------------------------单机调试相关函数-------------------------------------
-    
+
     def open_start(self):
         if self.open_start_flag:
             self.open_start_flag = False
@@ -272,7 +286,6 @@ class Control:
             except Exception as e:
                 self.addLogs(str(e))
 
-
     def open_forward(self):
         if self.open_forward_flag:
             if not self.open_start_flag:
@@ -324,7 +337,7 @@ class Control:
         self.button_zero.setEnabled(False)
         self.button_reset.setEnabled(False)
         self.button_start.setEnabled(False)
-            
+
     def open_stop(self):
         if self.open_stop_flag:
             self.button_stop.setText("停止")
@@ -429,7 +442,6 @@ class Control:
             select_axis = self.box_motor.currentIndex()
         self.tc3.write_by_name(f"Singal.reset_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
 
-
     def open_zero(self):
         if self.open_zero_flag:
             if not self.open_start_flag:
@@ -451,7 +463,6 @@ class Control:
             select_axis = self.box_motor.currentIndex()
         self.tc3.write_by_name(f"Singal.home_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
 
-
     def open_move(self):
         if self.open_move_flag:
             position_text = self.p_edit.text().strip()
@@ -460,7 +471,7 @@ class Control:
             if not self.open_start_flag:
                 self.addLogs("请先开启电机")
                 return
-             # 判断输入合法性
+            # 判断输入合法性
             if not position_text and not speed_text:
                 self.addLogs("请输入位置和速度")
                 return
@@ -470,20 +481,20 @@ class Control:
             elif not speed_text:
                 self.addLogs("请输入速度")
                 return
-             # 限制范围判断（这部分按实际修改）
+            # 限制范围判断（这部分按实际修改）
             try:
                 position = float(position_text)
                 speed = float(speed_text)
-                
+
                 # 检查位置和速度范围
                 if position < -100 or position > 100:
                     self.addLogs("位置范围错误,请输入-100到100之间的值")
                     return
-                    
+
                 if speed < 0 or speed > 15:
                     self.addLogs("速度范围错误,请输入0到15之间的值")
                     return
-                
+
             except ValueError:
                 self.addLogs("输入错误，请输入有效的数字")
                 return
@@ -506,6 +517,7 @@ class Control:
             margin-top: 0px;
         """)
             self.addLogs(f"电机以{speed_text}m/s速度移动至({position_text})")
+
     # ------------------------分系统流程相关函数----------------------------
     def set_button_style(self, button, active):
         if active:
@@ -546,24 +558,24 @@ class Control:
                 border: 1px solid gray;
                 margin-top: 0px;
             """)
-       
+
     def open_machineopen(self):
-            self.open_machineopen_flag = not self.open_machineopen_flag
-            self.set_button_style(self.button1, self.open_machineopen_flag)
-            self.set_led_style(self.led1, self.open_machineopen_flag)
-            if self.open_machineopen_flag:
-                self.addLogs("机构展开流程开始")
-            else:
-                self.addLogs("机构展开流程结束")
-            
+        self.open_machineopen_flag = not self.open_machineopen_flag
+        self.set_button_style(self.button1, self.open_machineopen_flag)
+        self.set_led_style(self.led1, self.open_machineopen_flag)
+        if self.open_machineopen_flag:
+            self.addLogs("机构展开流程开始")
+        else:
+            self.addLogs("机构展开流程结束")
+
     def open_dooropen(self):
-            self.open_dooropen_flag = not self.open_dooropen_flag
-            self.set_button_style(self.button2, self.open_dooropen_flag)
-            self.set_led_style(self.led2, self.open_dooropen_flag)
-            if self.open_dooropen_flag:
-                self.addLogs("捕获舱门打开流程开始")
-            else:
-                self.addLogs("捕获舱门打开流程结束")
+        self.open_dooropen_flag = not self.open_dooropen_flag
+        self.set_button_style(self.button2, self.open_dooropen_flag)
+        self.set_led_style(self.led2, self.open_dooropen_flag)
+        if self.open_dooropen_flag:
+            self.addLogs("捕获舱门打开流程开始")
+        else:
+            self.addLogs("捕获舱门打开流程结束")
 
     def open_capture(self):
         if self.open_servo_flag:
@@ -581,7 +593,6 @@ class Control:
             self.servo.update_pose_signal.connect(self.write_delta)
             self.servo.start_servo()
 
-
     def open_doorclose(self):
         self.open_doorclose_flag = not self.open_doorclose_flag
         self.set_button_style(self.button4, self.open_doorclose_flag)
@@ -590,7 +601,7 @@ class Control:
             self.addLogs("捕获舱门关闭流程开始")
         else:
             self.addLogs("捕获舱门关闭流程结束")
-            
+
     def open_dock(self):
         self.open_dock_flag = not self.open_dock_flag
         self.set_button_style(self.button5, self.open_dock_flag)
@@ -599,7 +610,7 @@ class Control:
             self.addLogs("转移对接流程开始")
         else:
             self.addLogs("转移对接流程结束")
-            
+
     def open_doormoveopen(self):
         self.open_doormoveopen_flag = not self.open_doormoveopen_flag
         self.set_button_style(self.button6, self.open_doormoveopen_flag)
@@ -608,7 +619,7 @@ class Control:
             self.addLogs("转移舱门打开流程开始")
         else:
             self.addLogs("转移舱门打开流程结束")
-            
+
     def open_machineclose(self):
         self.open_machineclose_flag = not self.open_machineclose_flag
         self.set_button_style(self.button7, self.open_machineclose_flag)
@@ -617,7 +628,7 @@ class Control:
             self.addLogs("机构收拢流程开始")
         else:
             self.addLogs("机构收拢流程结束")
-            
+
     def open_target(self):
         self.open_target_flag = not self.open_target_flag
         self.set_button_style(self.button8, self.open_target_flag)
@@ -626,23 +637,22 @@ class Control:
             self.addLogs("目标推送流程开始")
         else:
             self.addLogs("目标推送流程结束")
-    
+
     # 日志显示相关
     def addLogs(self, *args, split=''):
-       
+
         newLog = split.join(args)
         self.logText.appendPlainText(newLog)
-       
-        print(newLog)
 
+        print(newLog)
 
     def add_adsvars(self):
         # 添加要监控的变量
         for i in range(7):
-            self.tc3.add_variable(f"GVL.axis[{i+1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
-            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
-            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
-            self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i + 1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i + 1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i + 1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
+            self.tc3.add_variable(f"GVL.axis[{i + 1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
 
         self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
@@ -652,7 +662,7 @@ class Control:
         self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
-    def value_changed(self, name ,value):
+    def value_changed(self, name, value):
         pattern = r'\d+'
         types = name.split(".")[-1]
         try:
@@ -663,16 +673,16 @@ class Control:
                 else:
                     astr = "停止状态"
                 item_data = QtWidgets.QTableWidgetItem(astr)
-                self.table.setItem(row-1,1,item_data)
+                self.table.setItem(row - 1, 1, item_data)
             elif types == "ActVelo":
-                item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
-                self.table.setItem(row-1,2,item_data)
+                item_data = QtWidgets.QTableWidgetItem(str(round(value, 3)))
+                self.table.setItem(row - 1, 2, item_data)
             elif types == "ActPos":
-                item_data = QtWidgets.QTableWidgetItem(str(round(value,3)))
-                self.table.setItem(row-1,3,item_data)
+                item_data = QtWidgets.QTableWidgetItem(str(round(value, 3)))
+                self.table.setItem(row - 1, 3, item_data)
             elif types == "ErrorCode":
                 item_data = QtWidgets.QTableWidgetItem(str(value))
-                self.table.setItem(row-1,4,item_data)
+                self.table.setItem(row - 1, 4, item_data)
         except:
             if types == "ReaTwinX":
                 self.line_x.setText(str(value))
@@ -686,10 +696,6 @@ class Control:
                 self.line_Rp.setText(str(value))
             elif types == "ReaTwinRZ":
                 self.line_Ry.setText(str(value))
-        
-        
-
-
 
     def update_image(self, image):
         # Update the image_label with a new image
