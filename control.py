@@ -79,6 +79,9 @@ class Control:
                 self.tc3.eeposx_signal.connect(self.value_changed)
                 self.tc3.eeposy_signal.connect(self.value_changed)
                 self.tc3.eeposz_signal.connect(self.value_changed)
+                self.tc3.eeposrx_signal.connect(self.value_changed)
+                self.tc3.eeposry_signal.connect(self.value_changed)
+                self.tc3.eeposrz_signal.connect(self.value_changed)
                 self.tc3.start_monitoring()
                 self.connect_led.setStyleSheet("""
                 background-color: rgb(88, 214, 92);
@@ -572,6 +575,9 @@ class Control:
             self.open_servo_flag = False
             self.set_button_style(self.button3, self.open_servo_flag)
             self.set_led_style(self.led3, self.open_servo_flag)
+            self.tc3.write_by_name(f"Moto_to.RepythonX", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Moto_to.RepythonY", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Moto_to.RepythonZ", 0, pyads.PLCTYPE_LREAL)
         else:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
@@ -644,12 +650,12 @@ class Control:
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
 
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.Fb_test.stOutput.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"Moto_to.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name ,value):
@@ -675,17 +681,17 @@ class Control:
                 self.table.setItem(row-1,4,item_data)
         except:
             if types == "ReaTwinX":
-                self.line_x.setText(str(value))
+                self.line_x.setText(str(round(value,3)))
             elif types == "ReaTwinY":
-                self.line_y.setText(str(value))
+                self.line_y.setText(str(round(value,3)))
             elif types == "ReaTwinZ":
-                self.line_z.setText(str(value))
+                self.line_z.setText(str(round(value,3)))
             elif types == "ReaTwinRX":
-                self.line_Rr.setText(str(value))
+                self.line_Rr.setText(str(round(value,3)))
             elif types == "ReaTwinRY":
-                self.line_Rp.setText(str(value))
+                self.line_Rp.setText(str(round(value,3)))
             elif types == "ReaTwinRZ":
-                self.line_Ry.setText(str(value))
+                self.line_Ry.setText(str(round(value,3)))
         
         
 
@@ -696,6 +702,6 @@ class Control:
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
 
     def write_delta(self, delta_world):
-        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
-        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
-        self.tc3.write_by_name(f"Moto_to.Fb_test.stInput.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"Moto_to.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)
