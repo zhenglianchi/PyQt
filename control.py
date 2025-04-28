@@ -1,12 +1,11 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5 import QtWidgets
+from PyQt5.QtGui import QPixmap
 from ads import TwinCat3_ADSserver
 import pyads
 import re
-from ForceThread import ForceThread
+from FTSensor.ForceThread import ForceThread
 from video import VideoThread
 from Servo import VisualServoThread
-from PyQt5.QtWidgets import QMessageBox
 
 
 class Control:
