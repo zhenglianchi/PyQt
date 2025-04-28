@@ -193,7 +193,8 @@ class Control:
             border-bottom: 2px solid #a3a3a3;
             margin-top: 0px;
         """)
-            self.ip_edit.clear()
+            # self.ip_edit.clear()
+            self.forceThread.stop()
             self.addLogs("六维力关闭")
         else:
             if ip_address == "192.168.111.20":
@@ -211,6 +212,7 @@ class Control:
         """)
                 self.forceThread = ForceThread(ip_address)
                 self.forceThread._ft_data.connect(self.updateFT)
+                self.forceThread.start()
 
                 self.addLogs("六维力开启")
             else:

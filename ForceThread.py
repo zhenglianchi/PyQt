@@ -39,3 +39,6 @@ class ForceThread(QThread):
                 self._is_running = False
                 self.sensor.stopStreaming()
                 print("ftSensor 流式传输断开")
+
+    def stop(self):
+        self._is_running = False
