@@ -16,7 +16,17 @@ class TwinCat3_ADSserver(QThread):
     eeposry_signal = pyqtSignal(str, float)
     eeposrz_signal = pyqtSignal(str, float)
 
-    def __init__(self, ip="5.108.90.221.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
+    move_done = pyqtSignal(str, bool)
+
+    JigouZhankai_State = pyqtSignal(str,bool)
+    CangMen_State = pyqtSignal(str,bool)
+    CangMen_State_Close = pyqtSignal(str,bool)
+    Zhuanyi_State = pyqtSignal(str,bool)
+    ZhuanyiCangmen_State = pyqtSignal(str,bool)
+    Jigoushoulong_State = pyqtSignal(str,bool)
+    Tuisong_State = pyqtSignal(str,bool)
+
+    def __init__(self, ip="127.0.0.1.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
         '''
         type ip: str
         type amsNetIdTarget: pyads.PORT_xxx
@@ -88,6 +98,22 @@ class TwinCat3_ADSserver(QThread):
                         self.eeposry_signal.emit(name, value)
                     elif types == "ReaTwinRZ":
                         self.eeposrz_signal.emit(name, value)
+                    elif types == "JigouZhankai_State":
+                        self.JigouZhankai_State.emit(name, value)
+                    elif types == "CangMen_State":
+                        self.CangMen_State.emit(name, value)
+                    elif types == "CangMen_State_Close":
+                        self.CangMen_State_Close.emit(name, value)
+                    elif types == "Zhuanyi_State":
+                        self.Zhuanyi_State.emit(name, value)
+                    elif types == "ZhuanyiCangmen_State":
+                        self.ZhuanyiCangmen_State.emit(name, value)
+                    elif types == "Jigoushoulong_State":
+                        self.Jigoushoulong_State.emit(name, value)
+                    elif types == "Tuisong_State":
+                        self.Tuisong_State.emit(name, value)
+                    elif types == "Done":
+                        self.move_done.emit(name, value)
                     else:
                         print("读取到不存在的变量")
                 

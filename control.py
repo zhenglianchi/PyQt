@@ -82,6 +82,15 @@ class Control:
                 self.tc3.eeposrx_signal.connect(self.value_changed)
                 self.tc3.eeposry_signal.connect(self.value_changed)
                 self.tc3.eeposrz_signal.connect(self.value_changed)
+                self.tc3.JigouZhankai_State.connect(self.value_changed)
+                self.tc3.CangMen_State.connect(self.value_changed)
+                self.tc3.CangMen_State_Close.connect(self.value_changed)
+                self.tc3.Zhuanyi_State.connect(self.value_changed)
+                self.tc3.ZhuanyiCangmen_State.connect(self.value_changed)
+                self.tc3.Jigoushoulong_State.connect(self.value_changed)
+                self.tc3.Tuisong_State.connect(self.value_changed)
+                self.tc3.move_done.connect(self.value_changed)
+
                 self.tc3.start_monitoring()
                 self.connect_led.setStyleSheet("""
                 background-color: rgb(88, 214, 92);
@@ -157,8 +166,8 @@ class Control:
             margin-top: 0px;
         """)
             self.addLogs("电机关闭")
-            self.tc3.write_by_name(f"MAIN.Enable_Open", False, pyads.PLCTYPE_BOOL)
-            self.box_motor.setReadOnly(False)
+            self.tc3.write_by_name(f"GVL.Enable_Open", False, pyads.PLCTYPE_BOOL)
+            self.box_motor.setEnabled(False)
         else:
             try:
                 self.open_motor_flag = True
@@ -174,8 +183,8 @@ class Control:
                 margin-top: 0px;
             """)
                 self.addLogs("电机开启")
-                self.tc3.write_by_name(f"MAIN.Enable_Open", True, pyads.PLCTYPE_BOOL)
-                self.box_motor.setReadOnly(True)
+                self.tc3.write_by_name(f"GVL.Enable_Open", True, pyads.PLCTYPE_BOOL)
+                self.box_motor.setEnabled(True)
             except Exception as e:
                 self.addLogs(str(e))
 
@@ -257,8 +266,8 @@ class Control:
         """)
             self.addLogs("单机调试关闭")
             select_axis = int(self.box_motor.currentIndex())
-            self.tc3.write_by_name(f"Singal.nSelect", select_axis, pyads.PLCTYPE_INT)
-            self.tc3.write_by_name(f"Singal.Enable_Open[{select_axis}]", False, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Single.nSelect", select_axis, pyads.PLCTYPE_INT)
+            self.tc3.write_by_name(f"Single.Enable_Open[{select_axis}]", False, pyads.PLCTYPE_BOOL)
         else:
             try:
                 # 检查是否选择了电机
@@ -270,8 +279,8 @@ class Control:
                 self.box_motor.setEnabled(False)
                 self.button_start.setText("关闭")
                 self.addLogs(f"{select_axis}单机调试启动")
-                self.tc3.write_by_name(f"Singal.nSelect", select_axis, pyads.PLCTYPE_INT)
-                self.tc3.write_by_name(f"Singal.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+                self.tc3.write_by_name(f"Single.nSelect", select_axis, pyads.PLCTYPE_INT)
+                self.tc3.write_by_name(f"Single.Enable_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
                 self.start_led.setStyleSheet("""
                 background-color: rgb(88, 214, 92);
                 border-radius: 20px; 
@@ -311,7 +320,7 @@ class Control:
         """)
             self.addLogs("电机正转")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"Singal.Positive_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Single.Positive_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_reverse.setEnabled(False)
         self.button_move.setEnabled(False)
         self.button_zero.setEnabled(False)
@@ -337,7 +346,7 @@ class Control:
         """)
             self.addLogs("电机反转")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"Singal.Negative_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Single.Negative_Open[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_forward.setEnabled(False)
         self.button_move.setEnabled(False)
         self.button_zero.setEnabled(False)
@@ -420,8 +429,9 @@ class Control:
             """)
             self.addLogs("电机停止")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"Singal.stop_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.tc3.write_by_name(f"Single.stop_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
         self.button_forward.setEnabled(True)
+        self.button_reverse.setEnabled(True)
         self.button_move.setEnabled(True)
         self.button_zero.setEnabled(True)
         self.button_reset.setEnabled(True)
@@ -446,8 +456,8 @@ class Control:
         """)
             self.addLogs("电机复位")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"Singal.reset_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
-
+        self.tc3.write_by_name(f"Single.reset_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.set_button_style(self.button_reset,False)
 
     def open_zero(self):
         if self.open_zero_flag:
@@ -468,8 +478,8 @@ class Control:
         """)
             self.addLogs("电机回零")
             select_axis = self.box_motor.currentIndex()
-        self.tc3.write_by_name(f"Singal.home_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
-
+        self.tc3.write_by_name(f"Single.home_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+        self.set_button_style(self.button_zero,False)
 
     def open_move(self):
         if self.open_move_flag:
@@ -511,9 +521,9 @@ class Control:
             select_axis = self.box_motor.currentIndex()
             setpos = float(self.p_edit.text())
             setvelo = float(self.v_edit.text())
-            self.tc3.write_by_name(f"Singal.abs_Position[{select_axis}]", setpos, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"Singal.abs_Velocity[{select_axis}]", setvelo, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"Singal.abs_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Single.abs_Position[{select_axis}]", setpos, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Single.abs_Velocity[{select_axis}]", setvelo, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"Single.abs_flag[{select_axis}]", True, pyads.PLCTYPE_BOOL)
             self.button_move.setStyleSheet("""
             background-color: gray;
             color: black;
@@ -567,22 +577,29 @@ class Control:
             """)
        
     def open_machineopen(self):
-            self.open_machineopen_flag = not self.open_machineopen_flag
-            self.set_button_style(self.button1, self.open_machineopen_flag)
-            self.set_led_style(self.led1, self.open_machineopen_flag)
-            if self.open_machineopen_flag:
+            if not self.open_machineopen_flag:
                 self.addLogs("机构展开流程开始")
+                self.open_machineopen_flag = True
+                self.set_button_style(self.button1, self.open_machineopen_flag)
+                self.tc3.write_by_name(f"GVL.JigouZhanKai_Open", True, pyads.PLCTYPE_BOOL)
             else:
-                self.addLogs("机构展开流程结束")
+                JigouZhankai_State = self.tc3.read_by_name(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL)
+                if JigouZhankai_State:
+                    self.addLogs("机构展开流程结束")
+                    self.set_led_style(self.led1, self.open_machineopen_flag)
             
+
     def open_dooropen(self):
-            self.open_dooropen_flag = not self.open_dooropen_flag
-            self.set_button_style(self.button2, self.open_dooropen_flag)
-            self.set_led_style(self.led2, self.open_dooropen_flag)
-            if self.open_dooropen_flag:
+            if not self.open_dooropen_flag:
                 self.addLogs("捕获舱门打开流程开始")
+                self.open_dooropen_flag = True
+                self.set_button_style(self.button2, self.open_dooropen_flag)
+                self.tc3.write_by_name(f"GVL.Kaimen_Flag", True, pyads.PLCTYPE_BOOL)
             else:
-                self.addLogs("捕获舱门打开流程结束")
+                CangMen_State = self.tc3.read_by_name(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL)
+                if CangMen_State:
+                    self.addLogs("捕获舱门打开流程结束")
+                    self.set_led_style(self.led2, self.open_dooropen_flag)
 
     def open_capture(self):
         if self.open_servo_flag:
@@ -605,49 +622,68 @@ class Control:
 
 
     def open_doorclose(self):
-        self.open_doorclose_flag = not self.open_doorclose_flag
-        self.set_button_style(self.button4, self.open_doorclose_flag)
-        self.set_led_style(self.led4, self.open_doorclose_flag)
-        if self.open_doorclose_flag:
+        if not self.open_doorclose_flag:
             self.addLogs("捕获舱门关闭流程开始")
+            self.open_doorclose_flag = True
+            self.set_button_style(self.button4, self.open_doorclose_flag)
+            self.tc3.write_by_name(f"GVL.CangMen_Close", True, pyads.PLCTYPE_BOOL)
         else:
-            self.addLogs("捕获舱门关闭流程结束")
-            
+            CangMen_State_Close = self.tc3.read_by_name(f"GVL.CangMen_State_Close", pyads.PLCTYPE_BOOL)
+            if CangMen_State_Close:
+                self.addLogs("捕获舱门关闭流程结束")
+                self.set_led_style(self.led4, self.open_doorclose_flag)
+        
     def open_dock(self):
-        self.open_dock_flag = not self.open_dock_flag
-        self.set_button_style(self.button5, self.open_dock_flag)
-        self.set_led_style(self.led5, self.open_dock_flag)
-        if self.open_dock_flag:
+        if not self.open_dock_flag:
             self.addLogs("转移对接流程开始")
+            self.open_dock_flag = True
+            self.set_button_style(self.button5, self.open_dock_flag)
+            self.tc3.write_by_name(f"GVL.Zhuanyi_Open", True, pyads.PLCTYPE_BOOL)
         else:
-            self.addLogs("转移对接流程结束")
+            Zhuanyi_State = self.tc3.read_by_name(f"GVL.Zhuanyi_State", pyads.PLCTYPE_BOOL)
+            if Zhuanyi_State:
+                self.addLogs("转移对接流程结束")
+                self.set_led_style(self.led5, self.open_dock_flag)
+                
             
     def open_doormoveopen(self):
-        self.open_doormoveopen_flag = not self.open_doormoveopen_flag
-        self.set_button_style(self.button6, self.open_doormoveopen_flag)
-        self.set_led_style(self.led6, self.open_doormoveopen_flag)
-        if self.open_doormoveopen_flag:
+        if not self.open_doormoveopen_flag:
             self.addLogs("转移舱门打开流程开始")
+            self.open_doormoveopen_flag = True
+            self.set_button_style(self.button6, self.open_doormoveopen_flag)
+            self.tc3.write_by_name(f"GVL.ZhuanYiMen_Open", True, pyads.PLCTYPE_BOOL)
         else:
-            self.addLogs("转移舱门打开流程结束")
+            ZhuanyiCangmen_State = self.tc3.read_by_name(f"GVL.ZhuanyiCangmen_State", pyads.PLCTYPE_BOOL)
+            if ZhuanyiCangmen_State:
+                self.addLogs("转移舱门打开流程结束")
+                self.set_led_style(self.led6, self.open_doormoveopen_flag)
+                    
             
     def open_machineclose(self):
-        self.open_machineclose_flag = not self.open_machineclose_flag
-        self.set_button_style(self.button7, self.open_machineclose_flag)
-        self.set_led_style(self.led7, self.open_machineclose_flag)
-        if self.open_machineclose_flag:
+        if not self.open_machineclose_flag:
             self.addLogs("机构收拢流程开始")
+            self.open_machineclose_flag = True
+            self.set_button_style(self.button7, self.open_machineclose_flag)
+            self.tc3.write_by_name(f"GVL.Jigoushoulong_Open", True, pyads.PLCTYPE_BOOL)
         else:
-            self.addLogs("机构收拢流程结束")
+            Jigoushoulong_State = self.tc3.read_by_name(f"GVL.Jigoushoulong_State", pyads.PLCTYPE_BOOL)
+            if Jigoushoulong_State:
+                self.addLogs("机构收拢流程结束")
+                self.set_led_style(self.led7, self.open_machineclose_flag)
+                    
             
     def open_target(self):
-        self.open_target_flag = not self.open_target_flag
-        self.set_button_style(self.button8, self.open_target_flag)
-        self.set_led_style(self.led8, self.open_target_flag)
-        if self.open_target_flag:
+        if not self.open_target_flag:
             self.addLogs("目标推送流程开始")
+            self.open_target_flag = not self.open_target_flag
+            self.set_button_style(self.button8, self.open_target_flag)
+            self.tc3.write_by_name(f"GVL.MubiaoTuisong", True, pyads.PLCTYPE_BOOL)
         else:
-            self.addLogs("目标推送流程结束")
+            Tuisong_State = self.tc3.read_by_name(f"GVL.Tuisong_State", pyads.PLCTYPE_BOOL)
+            if Tuisong_State:
+                self.addLogs("机构收拢流程结束")
+                self.set_led_style(self.led8, self.open_target_flag)
+                    
     
     # 日志显示相关
     def addLogs(self, *args, split=''):
@@ -660,18 +696,28 @@ class Control:
 
     def add_adsvars(self):
         # 添加要监控的变量
-        for i in range(7):
+        for i in range(14):
             self.tc3.add_variable(f"GVL.axis[{i+1}].Status.Moving", pyads.PLCTYPE_BOOL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
+            
+        self.tc3.add_variable(f"Single.mc_abs.Done", pyads.PLCTYPE_BOOL, self.value_changed)
 
-        self.tc3.add_variable(f"Moto_to.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"Moto_to.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        
+        self.tc3.add_variable(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.CangMen_State_Close", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.Zhuanyi_State", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.ZhuanyiCangmen_State", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.Jigoushoulong_State", pyads.PLCTYPE_BOOL, self.value_changed)
+        self.tc3.add_variable(f"GVL.Tuisong_State", pyads.PLCTYPE_BOOL, self.value_changed)
 
     # 定义回调函数
     def value_changed(self, name ,value):
@@ -680,10 +726,10 @@ class Control:
         try:
             row = int(re.findall(pattern, name)[0])
             if types == "Moving":
-                if value:
-                    astr = "运行状态"
-                else:
+                if float(self.table.item(row-1,2).text()) == 0:
                     astr = "停止状态"
+                else:
+                    astr = "运行状态"
                 item_data = QtWidgets.QTableWidgetItem(astr)
                 self.table.setItem(row-1,1,item_data)
             elif types == "ActVelo":
@@ -708,10 +754,40 @@ class Control:
                 self.line_Rp.setText(str(round(value,3)))
             elif types == "ReaTwinRZ":
                 self.line_Ry.setText(str(round(value,3)))
-        
-        
 
+            elif types == "Done":
+                if value:
+                    self.set_button_style(self.button_move, True)
 
+            elif types == "JigouZhankai_State":
+                if value and self.open_machineopen_flag:
+                    self.open_machineopen()
+                    self.open_machineopen_flag = False
+            elif types == "CangMen_State":
+                if value:
+                    self.open_dooropen()
+                    self.open_dooropen_flag = False
+            elif types == "CangMen_State_Close":
+                if value:
+                    self.open_doorclose()
+                    self.open_doorclose_flag = False
+            elif types == "Zhuanyi_State":
+                if value:
+                    self.open_dock()
+                    self.open_dock_flag = False
+            elif types == "ZhuanyiCangmen_State":
+                if value:
+                    self.open_doormoveopen()
+                    self.open_doormoveopen_flag = False
+            elif types == "Jigoushoulong_State":
+                if value:
+                    self.open_machineclose()
+                    self.open_machineclose_flag = False
+            elif types == "Tuisong_State":
+                if value:
+                    self.open_target()
+                    self.open_target_flag = False
+        
 
     def update_image(self, image):
         # Update the image_label with a new image
