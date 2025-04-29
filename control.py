@@ -5,7 +5,7 @@ import pyads
 import re
 from video import VideoThread
 from Servo import VisualServoThread
-from PyQt5.QtWidgets import QMessageBox
+from FTSensor.ForceThread import ForceThread
 
 class Control:
     def __init__(self, ui):
@@ -182,7 +182,7 @@ class Control:
 
 
     def open_force(self):
-        ip_address=self.ip_edit.text().strip()
+        ip_address = self.ip_edit.text().strip()
         if self.open_force_flag:
             self.open_force_flag = False
             self.button_force.setText("开启六维力")
@@ -196,10 +196,12 @@ class Control:
             border-bottom: 2px solid #a3a3a3;
             margin-top: 0px;
         """)
-            self.ip_edit.clear()
+            # self.ip_edit.clear()
+            self.forceThread.stop()
             self.addLogs("六维力关闭")
         else:
-            if ip_address=="111.111.111":
+            #后续双六维力判断
+            if ip_address == "192.168.111.20" or ip_address == "192.168.111.30":
                 self.open_force_flag = True
                 self.button_force.setText("关闭六维力")
                 self.button_force.setStyleSheet("""
@@ -212,10 +214,24 @@ class Control:
             border-bottom: 2px solid #a3a3a3;
             margin-top: 0px;
         """)
+                self.forceThread = ForceThread(ip_address)
+                self.forceThread._ft_data.connect(self.updateFT)
+                self.forceThread.start()
+
                 self.addLogs("六维力开启")
             else:
                 print("六维力ip地址错误")
                 self.addLogs("六维力ip地址错误")
+
+    def updateFT(self, ft):
+        self.ft = ft
+        if len(ft) == 6:
+            self.line_Fx.setText(str(round(ft[0],3)))
+            self.line_Fy.setText(str(round(ft[1],3)))
+            self.line_Fz.setText(str(round(ft[2],3)))
+            self.line_Tx.setText(str(round(ft[3],3)))
+            self.line_Ty.setText(str(round(ft[4],3)))
+            self.line_Tz.setText(str(round(ft[5],3)))
     # ------------------------------单机调试相关函数-------------------------------------
     
     def open_start(self):

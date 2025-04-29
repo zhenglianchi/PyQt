@@ -61,12 +61,14 @@ class MyMainWindow(QMainWindow,Ui_MainWindow): #这里也要记得改
         self.button6.clicked.connect(self.control.open_doormoveopen)
         self.button7.clicked.connect(self.control.open_machineclose)
         self.button8.clicked.connect(self.control.open_target)
+
+        self.ip_edit.setText("192.168.111.20")
     # 日志显示
     def addLogs(self, *args, split=''):
        
         newLog = split.join(args)
         self.logText.appendPlainText(newLog)
-       
+
         print(newLog)
        
 if __name__ == "__main__":
