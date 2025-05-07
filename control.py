@@ -594,7 +594,7 @@ class Control:
                 self.addLogs("捕获舱门打开流程开始")
                 self.open_dooropen_flag = True
                 self.set_button_style(self.button2, self.open_dooropen_flag)
-                self.tc3.write_by_name(f"GVL.Kaimen_Flag", True, pyads.PLCTYPE_BOOL)
+                self.tc3.write_by_name(f"GVL.CangMen_Open", True, pyads.PLCTYPE_BOOL)
             else:
                 CangMen_State = self.tc3.read_by_name(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL)
                 if CangMen_State:
@@ -675,7 +675,7 @@ class Control:
     def open_target(self):
         if not self.open_target_flag:
             self.addLogs("目标推送流程开始")
-            self.open_target_flag = not self.open_target_flag
+            self.open_target_flag = True
             self.set_button_style(self.button8, self.open_target_flag)
             self.tc3.write_by_name(f"GVL.MubiaoTuisong", True, pyads.PLCTYPE_BOOL)
         else:
@@ -764,27 +764,27 @@ class Control:
                     self.open_machineopen()
                     self.open_machineopen_flag = False
             elif types == "CangMen_State":
-                if value:
+                if value and self.open_dooropen_flag:
                     self.open_dooropen()
                     self.open_dooropen_flag = False
             elif types == "CangMen_State_Close":
-                if value:
+                if value and self.open_doorclose_flag:
                     self.open_doorclose()
                     self.open_doorclose_flag = False
             elif types == "Zhuanyi_State":
-                if value:
+                if value and self.open_dock_flag:
                     self.open_dock()
                     self.open_dock_flag = False
             elif types == "ZhuanyiCangmen_State":
-                if value:
+                if value and self.open_doormoveopen_flag:
                     self.open_doormoveopen()
                     self.open_doormoveopen_flag = False
             elif types == "Jigoushoulong_State":
-                if value:
+                if value and self.open_machineclose_flag:
                     self.open_machineclose()
                     self.open_machineclose_flag = False
             elif types == "Tuisong_State":
-                if value:
+                if value and self.open_target_flag:
                     self.open_target()
                     self.open_target_flag = False
         
