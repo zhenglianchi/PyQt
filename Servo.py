@@ -90,10 +90,8 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
 
     T_world_d = T_matrix_to_world @ Td @ T_matrix_to_world.inv()
 
-    #print("当前位姿齐次表示:\n",T_translation * T_rotation)
-    #print("当前位姿增量在相机坐标系下:\n",Td)
-    #print("当前位姿增量在世界坐标系下:\n",T_world_d)
-    #print("下一步位姿齐次表示:\n",next_T_matrix)
+    # print("当前位姿增量在相机坐标系下:\n",Td)
+    # print("当前位姿增量在世界坐标系下:\n",T_world_d)
 
     # 提取平移部分
     translation = T_world_d.t
@@ -121,8 +119,8 @@ class VisualServoThread(QThread):
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
                 Z = self.video_thread.Z
-                rx,ry,rz = 0,0,0
                 x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
+                rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
                 curr_pose = [x,y,z,rx,ry,rz]
                 cam_delta, world_delta = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())

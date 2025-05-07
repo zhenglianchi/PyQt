@@ -9,14 +9,13 @@ class TwinCat3_ADSserver(QThread):
     velo_signal = pyqtSignal(str, float)
     pos_signal = pyqtSignal(str, float)
     error_signal = pyqtSignal(str, int)
+
     eeposx_signal = pyqtSignal(str, float)
     eeposy_signal = pyqtSignal(str, float)
     eeposz_signal = pyqtSignal(str, float)
     eeposrx_signal = pyqtSignal(str, float)
     eeposry_signal = pyqtSignal(str, float)
     eeposrz_signal = pyqtSignal(str, float)
-
-    move_done = pyqtSignal(str, bool)
 
     JigouZhankai_State = pyqtSignal(str,bool)
     CangMen_State = pyqtSignal(str,bool)
@@ -26,7 +25,7 @@ class TwinCat3_ADSserver(QThread):
     Jigoushoulong_State = pyqtSignal(str,bool)
     Tuisong_State = pyqtSignal(str,bool)
 
-    def __init__(self, ip="127.0.0.1.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
+    def __init__(self, ip="5.108.90.221.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
         '''
         type ip: str
         type amsNetIdTarget: pyads.PORT_xxx
@@ -36,7 +35,6 @@ class TwinCat3_ADSserver(QThread):
         self.amsNetIdTarget = amsNetIdTarget
         # 线程相关属性
         self.running = False
-        self.lock = threading.Lock()
         self.variables = {}  # 存储要监控的变量 {name: (type, callback)}
 
     def read_by_name(self, name, var_type):
@@ -56,26 +54,19 @@ class TwinCat3_ADSserver(QThread):
 
     def add_variable(self, name, var_type, callback=None):
         """添加要监控的变量"""
-        with self.lock:
-            self.variables[name] = (var_type, callback)
+        self.variables[name] = (var_type, callback)
 
     def remove_variable(self, name):
         """移除监控变量"""
-        with self.lock:
-            if name in self.variables:
-                del self.variables[name]
+        if name in self.variables:
+            del self.variables[name]
 
     def run(self):
         """线程主循环"""
         self.running = True
         while self.running:
             try:
-                # 复制当前变量列表避免遍历时修改
-                with self.lock:
-                    current_vars = self.variables.copy()
-
-                # 遍历并读取所有变量
-                for name, (var_type, callback) in current_vars.items():
+                for name, (var_type, callback) in self.variables.items():
                     types = name.split(".")[-1]
                     value = self.read_by_name(name, var_type)
                     if types == "Moving":
@@ -112,8 +103,6 @@ class TwinCat3_ADSserver(QThread):
                         self.Jigoushoulong_State.emit(name, value)
                     elif types == "Tuisong_State":
                         self.Tuisong_State.emit(name, value)
-                    elif types == "Done":
-                        self.move_done.emit(name, value)
                     else:
                         print("读取到不存在的变量")
                 
@@ -123,9 +112,6 @@ class TwinCat3_ADSserver(QThread):
             except pyads.ADSError as e:
                 print(f"ADS通信错误: {e}")
                 time.sleep(1)  # 出错后等待重试
-            except Exception as e:
-                print(f"未知错误: {e}")
-                break
 
     def connect(self):
         """连接到TwinCAT3 PLC"""

@@ -89,7 +89,6 @@ class Control:
                 self.tc3.ZhuanyiCangmen_State.connect(self.value_changed)
                 self.tc3.Jigoushoulong_State.connect(self.value_changed)
                 self.tc3.Tuisong_State.connect(self.value_changed)
-                self.tc3.move_done.connect(self.value_changed)
 
                 self.tc3.start_monitoring()
                 self.connect_led.setStyleSheet("""
@@ -608,9 +607,9 @@ class Control:
             self.open_servo_flag = False
             self.set_button_style(self.button3, self.open_servo_flag)
             self.set_led_style(self.led3, self.open_servo_flag)
-            self.tc3.write_by_name(f"Moto_to.RepythonX", 0, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"Moto_to.RepythonY", 0, pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"Moto_to.RepythonZ", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
         else:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
@@ -701,8 +700,6 @@ class Control:
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActVelo", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
-            
-        self.tc3.add_variable(f"Single.mc_abs.Done", pyads.PLCTYPE_BOOL, self.value_changed)
 
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
@@ -710,7 +707,7 @@ class Control:
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
-        
+
         self.tc3.add_variable(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL, self.value_changed)
         self.tc3.add_variable(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL, self.value_changed)
         self.tc3.add_variable(f"GVL.CangMen_State_Close", pyads.PLCTYPE_BOOL, self.value_changed)
@@ -794,6 +791,6 @@ class Control:
         self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
 
     def write_delta(self, delta_world):
-        self.tc3.write_by_name(f"Moto_to.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
-        self.tc3.write_by_name(f"Moto_to.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
-        self.tc3.write_by_name(f"Moto_to.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"SiJueSiFu.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"SiJueSiFu.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
+        self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)
