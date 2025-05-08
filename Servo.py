@@ -172,13 +172,14 @@ class VisualServoThread(QThread):
         while self._run_flag:
             Z = self.video_thread.center_z
             print(Z)
+            
             if Z >=1e-6 and Z <=0.2 :
                 self.ui.addLogs("捕获流程结束")
                 self.stop()
                 self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
                 self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
                 self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
-                break
+
             x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
             rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
             curr_pose = [x,y,z,rx,ry,rz]
