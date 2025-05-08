@@ -38,11 +38,13 @@ class VideoThread(QThread):
         self.uv = None
         self.p_star = None
         self.Z = None
+        self.center_z = None
 
     def run(self):
         while self._run_flag:
             if self.camera.is_opened():
                 color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame = self.camera.get_aligned_images()
+                self.center_z = img_depth[int(self.camera.resolution[1] / 2), int(self.camera.resolution[0] / 2)] / 1000.0
 
                 img_color = np.array(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
 

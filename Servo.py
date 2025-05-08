@@ -8,6 +8,7 @@ from machinevisiontoolbox import *
 from spatialmath.base import *
 from spatialmath import *
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
+import pyads
 
 
 def visjac_p(uv, depth,K):
@@ -99,8 +100,41 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
 
     delta_speed = np.hstack((translation, rot)).reshape(1, 6).squeeze()
 
-    return v,delta_speed
+    return v,delta_speed,error_rms
 
+
+def forward_planner(pose, Z):
+    if Z <= 1e-6:
+        Z = 0.5
+
+    v = [0,0,Z,0,0,0]
+
+    # 重新计算位姿增量 Td
+    Td = SE3.Delta(v)
+
+    # 获得机械臂末端位姿
+    current_pos = pose
+
+    #print(current_pos)
+
+    current_object_pos = current_pos[:3]
+    current_object_rot = current_pos[3:]
+
+    T_translation = SE3(current_object_pos)
+    T_rotation_to_world = SE3.Rx(current_object_rot[0]) * SE3.Ry(current_object_rot[1]) * SE3.Rz(current_object_rot[2])
+
+    T_matrix_to_world = T_translation * T_rotation_to_world
+
+
+    T_world_d = T_matrix_to_world @ Td @ T_matrix_to_world.inv()
+
+    # 提取平移部分
+    translation = T_world_d.t
+    rot = v[3:]
+
+    delta_speed = np.hstack((translation, rot)).reshape(1, 6).squeeze()
+
+    return delta_speed
 
 
 class VisualServoThread(QThread):
@@ -114,16 +148,42 @@ class VisualServoThread(QThread):
         self._run_flag = None
 
     def run(self):
+        num = 0
         while self._run_flag:
             if self.video_thread.uv is not None and self.video_thread.p_star is not None and self.video_thread.Z is not None:
+                print(num)
+                if num == 50:
+                    break
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
                 Z = self.video_thread.Z
                 x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
                 rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
                 curr_pose = [x,y,z,rx,ry,rz]
-                cam_delta, world_delta = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
+                cam_delta, world_delta,error_rms = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
+                if error_rms < 2:
+                    num += 1
+                else:
+                    num = 0
+            time.sleep(0.1)  # 避免CPU占用过高
+
+        
+        while self._run_flag:
+            Z = self.video_thread.center_z
+            print(Z)
+            if Z >=1e-6 and Z <=0.2 :
+                self.ui.addLogs("捕获流程结束")
+                self.stop()
+                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
+                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
+                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
+                break
+            x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
+            rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
+            curr_pose = [x,y,z,rx,ry,rz]
+            world_delta = forward_planner(curr_pose, Z)
+            self.update_pose_signal.emit(world_delta.tolist())
 
             time.sleep(0.1)  # 避免CPU占用过高
 
