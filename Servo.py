@@ -107,7 +107,7 @@ def forward_planner(pose, Z):
     if Z <= 1e-6:
         Z = 0.5
 
-    v = [0,0,Z,0,0,0]
+    v = [0,0,0.03,0,0,0]
 
     # 重新计算位姿增量 Td
     Td = SE3.Delta(v)
@@ -152,7 +152,7 @@ class VisualServoThread(QThread):
         while self._run_flag:
             if self.video_thread.uv is not None and self.video_thread.p_star is not None and self.video_thread.Z is not None:
                 print(num)
-                if num == 50:
+                if num == 80:
                     break
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star
@@ -162,23 +162,16 @@ class VisualServoThread(QThread):
                 curr_pose = [x,y,z,rx,ry,rz]
                 cam_delta, world_delta,error_rms = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
-                if error_rms < 2:
+                if error_rms < 20:
                     num += 1
                 else:
                     num = 0
             time.sleep(0.1)  # 避免CPU占用过高
 
-        
+
         while self._run_flag:
             Z = self.video_thread.center_z
             print(Z)
-            
-            if Z >=1e-6 and Z <=0.2 :
-                self.ui.addLogs("捕获流程结束")
-                self.stop()
-                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
-                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
-                self.ui.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
 
             x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
             rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
@@ -187,6 +180,10 @@ class VisualServoThread(QThread):
             self.update_pose_signal.emit(world_delta.tolist())
 
             time.sleep(0.1)  # 避免CPU占用过高
+
+            if Z >=1e-6 and Z <=0.25 :
+                self.ui.open_capture()
+
 
     def stop(self):
         self._run_flag = False

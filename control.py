@@ -5,6 +5,7 @@ import pyads
 import re
 from video import VideoThread
 from Servo import VisualServoThread
+import time
 from FTSensor.ForceThread import ForceThread
 
 class Control:
@@ -605,6 +606,7 @@ class Control:
             self.addLogs("捕获流程结束")
             self.servo.stop()
             self.open_servo_flag = False
+            time.sleep(2)
             self.set_button_style(self.button3, self.open_servo_flag)
             self.set_led_style(self.led3, self.open_servo_flag)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
