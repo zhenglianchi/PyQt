@@ -606,9 +606,7 @@ class Control:
             self.addLogs("捕获流程结束")
             self.servo.stop()
             self.open_servo_flag = False
-            time.sleep(2)
-            self.set_button_style(self.button3, self.open_servo_flag)
-            self.set_led_style(self.led3, self.open_servo_flag)
+            self.set_led_style(self.led3, not self.open_servo_flag)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
@@ -616,9 +614,9 @@ class Control:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
             self.set_button_style(self.button3, self.open_servo_flag)
-            self.set_led_style(self.led3, self.open_servo_flag)
             self.servo = VisualServoThread(self, 0.6)
             self.servo.update_pose_signal.connect(self.write_delta)
+            self.servo.finished_signal.connect(self.judge)
             self.servo.start_servo()
 
 
@@ -796,3 +794,8 @@ class Control:
         self.tc3.write_by_name(f"SiJueSiFu.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)
         self.tc3.write_by_name(f"SiJueSiFu.RepythonY", delta_world[1], pyads.PLCTYPE_LREAL)
         self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", delta_world[2], pyads.PLCTYPE_LREAL)
+
+    def judge(self, finished_flag = False):
+        if finished_flag:
+            self.open_capture()
+

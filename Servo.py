@@ -139,6 +139,7 @@ def forward_planner(pose, Z):
 
 class VisualServoThread(QThread):
     update_pose_signal = pyqtSignal(list)
+    finished_signal = pyqtSignal(bool) 
 
     def __init__(self, ui , lambda_gain):
         super().__init__()
@@ -162,7 +163,7 @@ class VisualServoThread(QThread):
                 curr_pose = [x,y,z,rx,ry,rz]
                 cam_delta, world_delta,error_rms = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
-                if error_rms < 20:
+                if error_rms < 30:
                     num += 1
                 else:
                     num = 0
@@ -182,7 +183,8 @@ class VisualServoThread(QThread):
             time.sleep(0.1)  # 避免CPU占用过高
 
             if Z >=1e-6 and Z <=0.25 :
-                self.ui.open_capture()
+                self.finished_signal.emit(True)
+                break
 
 
     def stop(self):
