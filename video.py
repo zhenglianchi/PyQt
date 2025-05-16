@@ -44,7 +44,6 @@ class VideoThread(QThread):
         while self._run_flag:
             if self.camera.is_opened():
                 color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame = self.camera.get_aligned_images()
-                self.center_z = img_depth[int(self.camera.resolution[1] / 2), int(self.camera.resolution[0] / 2)] / 1000.0
 
                 img_color = np.array(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
 
@@ -59,7 +58,16 @@ class VideoThread(QThread):
                     x1, y1, x2, y2, conf, cls_id = box
                     if cls_id == 9 and conf > 0.5:
                         # 转换坐标为整数
-                        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                        x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
+                        x1, x2 = np.clip([x1, x2], 0, img_depth.shape[1])
+                        y1, y2 = np.clip([y1, y2], 0, img_depth.shape[0])
+
+                        # 提取检测框内的深度区域
+                        depth_roi = img_depth[y1:y2, x1:x2]
+
+                        # 直接计算平均深度（包括 0），单位转换为米
+                        self.center_z = np.mean(depth_roi) / 1000.0
+                        
                         # 绘制矩形框（颜色为绿色，线宽为2）
                         cv2.rectangle(img_color, (x1, y1), (x2, y2), (0, 255, 0), 2)
                         # 生成标签文本（类别和置信度）
