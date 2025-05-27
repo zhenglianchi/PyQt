@@ -241,6 +241,13 @@ class Control:
             self.line_Tx.setText(str(round(ft[3],3)))
             self.line_Ty.setText(str(round(ft[4],3)))
             self.line_Tz.setText(str(round(ft[5],3)))
+
+            #self.tc3.write_by_name(f"GVL.Fx", round(ft[0],3), pyads.PLCTYPE_LREAL)
+            #self.tc3.write_by_name(f"GVL.Fy", round(ft[1],3), pyads.PLCTYPE_LREAL)
+            #self.tc3.write_by_name(f"GVL.Fz", round(ft[2],3), pyads.PLCTYPE_LREAL)
+            #self.tc3.write_by_name(f"GVL.Tx", round(ft[3],3), pyads.PLCTYPE_LREAL)
+            #self.tc3.write_by_name(f"GVL.Ty", round(ft[4],3), pyads.PLCTYPE_LREAL)
+            #self.tc3.write_by_name(f"GVL.Tz", round(ft[5],3), pyads.PLCTYPE_LREAL)
     # ------------------------------单机调试相关函数-------------------------------------
     
     def open_start(self):
