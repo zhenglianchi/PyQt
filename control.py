@@ -210,7 +210,7 @@ class Control:
             self.addLogs("六维力关闭")
         else:
             #后续双六维力判断
-            if ip_address == "192.168.111.20" or ip_address == "192.168.111.30":
+            if ip_address == "169.254.117.20":
                 self.open_force_flag = True
                 self.button_force.setText("关闭六维力")
                 self.button_force.setStyleSheet("""
@@ -225,6 +225,7 @@ class Control:
         """)
                 self.forceThread = ForceThread(ip_address)
                 self.forceThread._ft_data.connect(self.updateFT)
+                self.forceThread.write_ft_data.connect(self.writeFT)
                 self.forceThread.start()
 
                 self.addLogs("六维力开启")
@@ -233,7 +234,6 @@ class Control:
                 self.addLogs("六维力ip地址错误")
 
     def updateFT(self, ft):
-        self.ft = ft
         if len(ft) == 6:
             self.line_Fx.setText(str(round(ft[0],3)))
             self.line_Fy.setText(str(round(ft[1],3)))
@@ -242,12 +242,14 @@ class Control:
             self.line_Ty.setText(str(round(ft[4],3)))
             self.line_Tz.setText(str(round(ft[5],3)))
 
-            #self.tc3.write_by_name(f"GVL.Fx", round(ft[0],3), pyads.PLCTYPE_LREAL)
-            #self.tc3.write_by_name(f"GVL.Fy", round(ft[1],3), pyads.PLCTYPE_LREAL)
-            #self.tc3.write_by_name(f"GVL.Fz", round(ft[2],3), pyads.PLCTYPE_LREAL)
-            #self.tc3.write_by_name(f"GVL.Tx", round(ft[3],3), pyads.PLCTYPE_LREAL)
-            #self.tc3.write_by_name(f"GVL.Ty", round(ft[4],3), pyads.PLCTYPE_LREAL)
-            #self.tc3.write_by_name(f"GVL.Tz", round(ft[5],3), pyads.PLCTYPE_LREAL)
+    def writeFT(self, ft):
+        if len(ft) == 6:
+            self.tc3.write_by_name(f"SiJueSiFu.FX", round(ft[0],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.FY", round(ft[1],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.FZ", round(ft[2],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TX", round(ft[3],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TY", round(ft[4],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TZ", round(ft[5],3), pyads.PLCTYPE_LREAL)
     # ------------------------------单机调试相关函数-------------------------------------
     
     def open_start(self):

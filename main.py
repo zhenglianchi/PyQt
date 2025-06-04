@@ -64,7 +64,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow): #这里也要记得改
         self.button7.clicked.connect(self.control.open_machineclose)
         self.button8.clicked.connect(self.control.open_target)
 
-        self.ip_edit.setText("192.168.111.20")
+        self.ip_edit.setText("169.254.117.20")
     # 日志显示
     def addLogs(self, *args, split=''):
        

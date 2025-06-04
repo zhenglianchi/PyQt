@@ -7,6 +7,7 @@ from .rpi_ati_net_ft import NET_FT
 
 class ForceThread(QThread):
     _ft_data = pyqtSignal(list)
+    write_ft_data = pyqtSignal(list)
 
     def __init__(self, ftSensorIp):
         super().__init__()
@@ -26,6 +27,7 @@ class ForceThread(QThread):
                     success, ft, status = self.sensor.try_read_ft_streaming(0.01)
                     if success:
                         self._ft_data.emit(ft.tolist())
+                        self.write_ft_data.emit(ft.tolist())
                     else:
                         time.sleep(0.05)
 
