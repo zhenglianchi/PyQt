@@ -97,7 +97,6 @@ class VideoThread(QThread):
                         self.Z = img_depth[int(center_point[1]), int(center_point[0])]/1000.0
 
                 img_color = cv2.resize(img_color, (467, 336))  # 注意参数是 (width, height)
-
                 # get image info
                 h, w, ch = img_color.shape
                 # create QImage from image

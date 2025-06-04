@@ -171,7 +171,10 @@ class VisualServoThread(QThread):
 
 
         while self._run_flag:
-            Z = self.video_thread.center_z
+            # 先用中心点深度，如果中心点深度为0则使用平均深度
+            Z = self.video_thread.Z
+            if Z == 0:
+                Z = self.video_thread.center_z
             print(Z)
 
             x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
@@ -182,7 +185,7 @@ class VisualServoThread(QThread):
 
             time.sleep(0.1)  # 避免CPU占用过高
 
-            if Z >=1e-6 and Z <=0.25 :
+            if Z >=1e-6 and Z <=0.2 :
                 self.finished_signal.emit(True)
                 break
 
