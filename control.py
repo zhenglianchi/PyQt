@@ -223,9 +223,8 @@ class Control:
             border-bottom: 2px solid #a3a3a3;
             margin-top: 0px;
         """)
-                self.forceThread = ForceThread(ip_address)
+                self.forceThread = ForceThread(ip_address,self.tc3)
                 self.forceThread._ft_data.connect(self.updateFT)
-                self.forceThread.write_ft_data.connect(self.writeFT)
                 self.forceThread.start()
 
                 self.addLogs("六维力开启")
@@ -242,14 +241,6 @@ class Control:
             self.line_Ty.setText(str(round(ft[4],3)))
             self.line_Tz.setText(str(round(ft[5],3)))
 
-    def writeFT(self, ft):
-        if len(ft) == 6:
-            self.tc3.write_by_name(f"SiJueSiFu.FX", round(ft[0],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.FY", round(ft[1],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.FZ", round(ft[2],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TX", round(ft[3],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TY", round(ft[4],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TZ", round(ft[5],3), pyads.PLCTYPE_LREAL)
     # ------------------------------单机调试相关函数-------------------------------------
     
     def open_start(self):
