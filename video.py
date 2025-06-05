@@ -6,27 +6,6 @@ import time
 import cv2
 from ultralytics import YOLO
 
-
-names = {
-    0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus',
-    6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant',
-    11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat',
-    16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear',
-    22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag',
-    27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard',
-    32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove',
-    36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle',
-    40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl',
-    46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli',
-    51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair',
-    57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet',
-    62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard',
-    67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink',
-    72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors',
-    77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'
-}
-
-
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
 
@@ -34,7 +13,8 @@ class VideoThread(QThread):
         super().__init__()
         self.camera = Camera()
         self._run_flag = True
-        self.yolo = YOLO("yolo11s.pt")
+        #self.yolo = YOLO("yolo11s.pt")
+        self.yolo = YOLO("best.pt")
         self.uv = None
         self.p_star = None
         self.Z = None
@@ -46,17 +26,18 @@ class VideoThread(QThread):
                 color_intrin, depth_intrin, img_color, img_depth, aligned_depth_frame = self.camera.get_aligned_images()
 
                 img_color = np.array(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
+                forward_img = np.array(cv2.cvtColor(img_color, cv2.COLOR_RGB2BGR))
 
                 # 调用 YOLO 模型进行检测
-                results = self.yolo(img_color,verbose=False)
+                results = self.yolo(forward_img,verbose=False)
                 # 获取检测结果
                 # 每个检测框数据格式为 [x1, y1, x2, y2, confidence, class_id]
                 boxes = results[0].boxes.data.cpu().numpy()
-                
+
                 # 遍历每个检测框
                 for box in boxes:
                     x1, y1, x2, y2, conf, cls_id = box
-                    if cls_id == 9 and conf > 0.5:
+                    if cls_id == 0 and conf > 0.5:
                         # 转换坐标为整数
                         x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
                         x1, x2 = np.clip([x1, x2], 0, img_depth.shape[1])
@@ -71,7 +52,7 @@ class VideoThread(QThread):
                         # 绘制矩形框（颜色为绿色，线宽为2）
                         cv2.rectangle(img_color, (x1, y1), (x2, y2), (0, 255, 0), 2)
                         # 生成标签文本（类别和置信度）
-                        label = f"{names[int(cls_id)]} {conf:.2f}"
+                        label = f"target: {conf:.2f}"
                         # 绘制标签（在框上方显示）
                         cv2.putText(img_color, label, (x1, y1 - 10),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
