@@ -579,9 +579,14 @@ class Control:
     def open_machineopen(self):
             if not self.open_machineopen_flag:
                 self.addLogs("机构展开流程开始")
+                motor_1 = self.line_motor_1.text()
+                if motor_1 == '':
+                    self.addLogs("请输入电机位移")
+                    return
                 self.open_machineopen_flag = True
                 self.set_button_style(self.button1, self.open_machineopen_flag)
                 self.tc3.write_by_name(f"GVL.JigouZhanKai_Open", True, pyads.PLCTYPE_BOOL)
+                self.tc3.write_by_name(f"Capture.jigouzhankai", float(motor_1), pyads.PLCTYPE_LREAL)
             else:
                 JigouZhankai_State = self.tc3.read_by_name(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL)
                 if JigouZhankai_State:
@@ -592,9 +597,14 @@ class Control:
     def open_dooropen(self):
             if not self.open_dooropen_flag:
                 self.addLogs("捕获舱门打开流程开始")
+                motor_2 = self.line_motor_2.text()
+                if motor_2 == '':
+                    self.addLogs("请输入电机位移")
+                    return
                 self.open_dooropen_flag = True
                 self.set_button_style(self.button2, self.open_dooropen_flag)
                 self.tc3.write_by_name(f"GVL.CangMen_Open", True, pyads.PLCTYPE_BOOL)
+                self.tc3.write_by_name(f"Capture.cangmenopen", float(motor_2), pyads.PLCTYPE_LREAL)
             else:
                 CangMen_State = self.tc3.read_by_name(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL)
                 if CangMen_State:
@@ -623,9 +633,14 @@ class Control:
     def open_doorclose(self):
         if not self.open_doorclose_flag:
             self.addLogs("捕获舱门关闭流程开始")
+            motor_4 = self.line_motor_4.text()
+            if motor_4 == '':
+                self.addLogs("请输入电机位移")
+                return
             self.open_doorclose_flag = True
             self.set_button_style(self.button4, self.open_doorclose_flag)
             self.tc3.write_by_name(f"GVL.CangMen_Close", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Capture.cangmenclose", float(motor_4), pyads.PLCTYPE_LREAL)
         else:
             CangMen_State_Close = self.tc3.read_by_name(f"GVL.CangMen_State_Close", pyads.PLCTYPE_BOOL)
             if CangMen_State_Close:
@@ -648,9 +663,14 @@ class Control:
     def open_doormoveopen(self):
         if not self.open_doormoveopen_flag:
             self.addLogs("转移舱门打开流程开始")
+            motor_6 = self.line_motor_6.text()
+            if motor_6 == '':
+                self.addLogs("请输入电机位移")
+                return
             self.open_doormoveopen_flag = True
             self.set_button_style(self.button6, self.open_doormoveopen_flag)
             self.tc3.write_by_name(f"GVL.ZhuanYiMen_Open", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Capture.cangmenopen", float(motor_6), pyads.PLCTYPE_LREAL)
         else:
             ZhuanyiCangmen_State = self.tc3.read_by_name(f"GVL.ZhuanyiCangmen_State", pyads.PLCTYPE_BOOL)
             if ZhuanyiCangmen_State:
@@ -661,9 +681,14 @@ class Control:
     def open_machineclose(self):
         if not self.open_machineclose_flag:
             self.addLogs("机构收拢流程开始")
+            motor_7 = self.line_motor_7.text()
+            if motor_7 == '':
+                self.addLogs("请输入电机位移")
+                return
             self.open_machineclose_flag = True
             self.set_button_style(self.button7, self.open_machineclose_flag)
             self.tc3.write_by_name(f"GVL.Jigoushoulong_Open", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Capture.jigoushoulong", float(motor_7), pyads.PLCTYPE_LREAL)
         else:
             Jigoushoulong_State = self.tc3.read_by_name(f"GVL.Jigoushoulong_State", pyads.PLCTYPE_BOOL)
             if Jigoushoulong_State:
@@ -674,9 +699,14 @@ class Control:
     def open_target(self):
         if not self.open_target_flag:
             self.addLogs("目标推送流程开始")
+            motor_8 = self.line_motor_8.text()
+            if motor_8 == '':
+                self.addLogs("请输入电机位移")
+                return
             self.open_target_flag = True
             self.set_button_style(self.button8, self.open_target_flag)
             self.tc3.write_by_name(f"GVL.MubiaoTuisong", True, pyads.PLCTYPE_BOOL)
+            self.tc3.write_by_name(f"Capture.tuisongpos", float(motor_8), pyads.PLCTYPE_LREAL)
         else:
             Tuisong_State = self.tc3.read_by_name(f"GVL.Tuisong_State", pyads.PLCTYPE_BOOL)
             if Tuisong_State:
@@ -701,12 +731,12 @@ class Control:
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
 
-        self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
+        '''self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)'''
 
         self.tc3.add_variable(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL, self.value_changed)
         self.tc3.add_variable(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL, self.value_changed)
@@ -751,10 +781,6 @@ class Control:
                 self.line_Rp.setText(str(round(value,3)))
             elif types == "ReaTwinRZ":
                 self.line_Ry.setText(str(round(value,3)))
-
-            elif types == "Done":
-                if value:
-                    self.set_button_style(self.button_move, True)
 
             elif types == "JigouZhankai_State":
                 if value and self.open_machineopen_flag:

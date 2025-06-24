@@ -638,19 +638,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_20.addWidget(self.led1)
         spacerItem13 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_20.addItem(spacerItem13)
-        self.line1 = QtWidgets.QLineEdit(self.widget_22)
+        
+        # 创建一个容器 widget 和水平布局
+        container1 = QtWidgets.QWidget(self.widget_22)
+        horizontal_layout1 = QtWidgets.QHBoxLayout(container1)
+        horizontal_layout1.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout1.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line1.sizePolicy().hasHeightForWidth())
-        self.line1.setSizePolicy(sizePolicy)
-        self.line1.setMinimumSize(QtCore.QSize(340, 35))
-        self.line1.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container1.sizePolicy().hasHeightForWidth())
+        container1.setSizePolicy(sizePolicy)
+        container1.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label1 = QtWidgets.QLabel("电机下发", container1)
+        self.line_motor_1 = QtWidgets.QLineEdit(container1)
+        self.line_motor_1.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_1.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_1.setObjectName("line_motor_1")
+
+        # 第二部分：长文本框
+        self.line1 = QtWidgets.QLineEdit(container1)
+        self.line1.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line1.setObjectName("line1")
-        self.horizontalLayout_20.addWidget(self.line1)
+
+        # 把组件加入到水平布局中
+        horizontal_layout1.addWidget(label1)
+        horizontal_layout1.addWidget(self.line_motor_1)
+        horizontal_layout1.addWidget(self.line1)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_20.addWidget(container1)
+
         self.verticalLayout_12.addWidget(self.widget_22)
         self.widget_23 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -698,19 +720,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_21.addWidget(self.led2)
         spacerItem15 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_21.addItem(spacerItem15)
-        self.line2 = QtWidgets.QLineEdit(self.widget_23)
+        
+        # 创建一个容器 widget 和水平布局
+        container2 = QtWidgets.QWidget(self.widget_23)
+        horizontal_layout2 = QtWidgets.QHBoxLayout(container2)
+        horizontal_layout2.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout2.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line2.sizePolicy().hasHeightForWidth())
-        self.line2.setSizePolicy(sizePolicy)
-        self.line2.setMinimumSize(QtCore.QSize(340, 35))
-        self.line2.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container2.sizePolicy().hasHeightForWidth())
+        container2.setSizePolicy(sizePolicy)
+        container2.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label2 = QtWidgets.QLabel("电机下发", container2)
+        self.line_motor_2 = QtWidgets.QLineEdit(container2)
+        self.line_motor_2.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_2.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_2.setObjectName("line_motor_2")
+
+        # 第二部分：长文本框
+        self.line2 = QtWidgets.QLineEdit(container2)
+        self.line2.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line2.setObjectName("line2")
-        self.horizontalLayout_21.addWidget(self.line2)
+
+        # 把组件加入到水平布局中
+        horizontal_layout2.addWidget(label2)
+        horizontal_layout2.addWidget(self.line_motor_2)
+        horizontal_layout2.addWidget(self.line2)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_21.addWidget(container2)
+
         self.verticalLayout_12.addWidget(self.widget_23)
         self.widget_24 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -758,19 +802,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_22.addWidget(self.led3)
         spacerItem17 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_22.addItem(spacerItem17)
-        self.line3 = QtWidgets.QLineEdit(self.widget_24)
+        
+        # 创建一个容器 widget 和水平布局
+        container3 = QtWidgets.QWidget(self.widget_24)
+        horizontal_layout3 = QtWidgets.QHBoxLayout(container3)
+        horizontal_layout3.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout3.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line3.sizePolicy().hasHeightForWidth())
-        self.line3.setSizePolicy(sizePolicy)
-        self.line3.setMinimumSize(QtCore.QSize(340, 35))
-        self.line3.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container3.sizePolicy().hasHeightForWidth())
+        container3.setSizePolicy(sizePolicy)
+        container3.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label3 = QtWidgets.QLabel("电机下发", container3)
+        self.line_motor_3 = QtWidgets.QLineEdit(container3)
+        self.line_motor_3.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_3.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_3.setObjectName("line_motor_3")
+
+        # 第二部分：长文本框
+        self.line3 = QtWidgets.QLineEdit(container3)
+        self.line3.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line3.setObjectName("line3")
-        self.horizontalLayout_22.addWidget(self.line3)
+
+        # 把组件加入到水平布局中
+        horizontal_layout3.addWidget(label3)
+        horizontal_layout3.addWidget(self.line_motor_3)
+        horizontal_layout3.addWidget(self.line3)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_22.addWidget(container3)
+
         self.verticalLayout_12.addWidget(self.widget_24)
         self.widget_28 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -818,19 +884,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_26.addWidget(self.led4)
         spacerItem19 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_26.addItem(spacerItem19)
-        self.line4 = QtWidgets.QLineEdit(self.widget_28)
+        
+        # 创建一个容器 widget 和水平布局
+        container4 = QtWidgets.QWidget(self.widget_28)
+        horizontal_layout4 = QtWidgets.QHBoxLayout(container4)
+        horizontal_layout4.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout4.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line4.sizePolicy().hasHeightForWidth())
-        self.line4.setSizePolicy(sizePolicy)
-        self.line4.setMinimumSize(QtCore.QSize(340, 35))
-        self.line4.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container4.sizePolicy().hasHeightForWidth())
+        container4.setSizePolicy(sizePolicy)
+        container4.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label4 = QtWidgets.QLabel("电机下发", container4)
+        self.line_motor_4 = QtWidgets.QLineEdit(container4)
+        self.line_motor_4.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_4.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_4.setObjectName("line_motor_4")
+
+        # 第二部分：长文本框
+        self.line4 = QtWidgets.QLineEdit(container4)
+        self.line4.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line4.setObjectName("line4")
-        self.horizontalLayout_26.addWidget(self.line4)
+
+        # 把组件加入到水平布局中
+        horizontal_layout4.addWidget(label4)
+        horizontal_layout4.addWidget(self.line_motor_4)
+        horizontal_layout4.addWidget(self.line4)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_26.addWidget(container4)
+
         self.verticalLayout_12.addWidget(self.widget_28)
         self.widget_27 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -878,19 +966,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_25.addWidget(self.led5)
         spacerItem21 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_25.addItem(spacerItem21)
-        self.line5 = QtWidgets.QLineEdit(self.widget_27)
+        
+        # 创建一个容器 widget 和水平布局
+        container5 = QtWidgets.QWidget(self.widget_27)
+        horizontal_layout5 = QtWidgets.QHBoxLayout(container5)
+        horizontal_layout5.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout5.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line5.sizePolicy().hasHeightForWidth())
-        self.line5.setSizePolicy(sizePolicy)
-        self.line5.setMinimumSize(QtCore.QSize(340, 35))
-        self.line5.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container5.sizePolicy().hasHeightForWidth())
+        container5.setSizePolicy(sizePolicy)
+        container5.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label5 = QtWidgets.QLabel("电机下发", container5)
+        self.line_motor_5 = QtWidgets.QLineEdit(container5)
+        self.line_motor_5.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_5.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_5.setObjectName("line_motor_5")
+
+        # 第二部分：长文本框
+        self.line5 = QtWidgets.QLineEdit(container5)
+        self.line5.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line5.setObjectName("line5")
-        self.horizontalLayout_25.addWidget(self.line5)
+
+        # 把组件加入到水平布局中
+        horizontal_layout5.addWidget(label5)
+        horizontal_layout5.addWidget(self.line_motor_5)
+        horizontal_layout5.addWidget(self.line5)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_25.addWidget(container5)
+
         self.verticalLayout_12.addWidget(self.widget_27)
         self.widget_26 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -943,19 +1053,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_24.addWidget(self.led6)
         spacerItem23 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_24.addItem(spacerItem23)
-        self.line6 = QtWidgets.QLineEdit(self.widget_26)
+        
+        # 创建一个容器 widget 和水平布局
+        container6 = QtWidgets.QWidget(self.widget_26)
+        horizontal_layout6 = QtWidgets.QHBoxLayout(container6)
+        horizontal_layout6.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout6.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line6.sizePolicy().hasHeightForWidth())
-        self.line6.setSizePolicy(sizePolicy)
-        self.line6.setMinimumSize(QtCore.QSize(340, 35))
-        self.line6.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container6.sizePolicy().hasHeightForWidth())
+        container6.setSizePolicy(sizePolicy)
+        container6.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label6 = QtWidgets.QLabel("电机下发", container6)
+        self.line_motor_6 = QtWidgets.QLineEdit(container6)
+        self.line_motor_6.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_6.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_6.setObjectName("line_motor_6")
+
+        # 第二部分：长文本框
+        self.line6 = QtWidgets.QLineEdit(container6)
+        self.line6.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line6.setObjectName("line6")
-        self.horizontalLayout_24.addWidget(self.line6)
+
+        # 把组件加入到水平布局中
+        horizontal_layout6.addWidget(label6)
+        horizontal_layout6.addWidget(self.line_motor_6)
+        horizontal_layout6.addWidget(self.line6)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_24.addWidget(container6)
+
         self.verticalLayout_12.addWidget(self.widget_26)
         self.widget_25 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -1003,19 +1135,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_23.addWidget(self.led7)
         spacerItem25 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_23.addItem(spacerItem25)
-        self.line7 = QtWidgets.QLineEdit(self.widget_25)
+        
+        # 创建一个容器 widget 和水平布局
+        container7 = QtWidgets.QWidget(self.widget_25)
+        horizontal_layout7 = QtWidgets.QHBoxLayout(container7)
+        horizontal_layout7.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout7.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line7.sizePolicy().hasHeightForWidth())
-        self.line7.setSizePolicy(sizePolicy)
-        self.line7.setMinimumSize(QtCore.QSize(340, 35))
-        self.line7.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container7.sizePolicy().hasHeightForWidth())
+        container7.setSizePolicy(sizePolicy)
+        container7.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label7 = QtWidgets.QLabel("电机下发", container7)
+        self.line_motor_7 = QtWidgets.QLineEdit(container7)
+        self.line_motor_7.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_7.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_7.setObjectName("line_motor_7")
+
+        # 第二部分：长文本框
+        self.line7 = QtWidgets.QLineEdit(container7)
+        self.line7.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line7.setObjectName("line7")
-        self.horizontalLayout_23.addWidget(self.line7)
+
+        # 把组件加入到水平布局中
+        horizontal_layout7.addWidget(label7)
+        horizontal_layout7.addWidget(self.line_motor_7)
+        horizontal_layout7.addWidget(self.line7)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_23.addWidget(container7)
+
         self.verticalLayout_12.addWidget(self.widget_25)
         self.widget_21 = QtWidgets.QWidget(self.widget_14)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -1063,19 +1217,41 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.addWidget(self.led8)
         spacerItem27 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_19.addItem(spacerItem27)
-        self.line8 = QtWidgets.QLineEdit(self.widget_21)
+        
+        # 创建一个容器 widget 和水平布局
+        container8 = QtWidgets.QWidget(self.widget_21)
+        horizontal_layout8 = QtWidgets.QHBoxLayout(container8)
+        horizontal_layout8.setContentsMargins(0, 0, 0, 0)  # 去除边距干扰
+        horizontal_layout8.setSpacing(5)  # 控件之间的间距
+
+        # 设置 container1 的大小策略与最小尺寸
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line8.sizePolicy().hasHeightForWidth())
-        self.line8.setSizePolicy(sizePolicy)
-        self.line8.setMinimumSize(QtCore.QSize(340, 35))
-        self.line8.setStyleSheet("background-color: #f9f9f9;\n"
-"padding: 5px 10px;\n"
-"border:none;\n"
-"margin-top: 0px;")
+        sizePolicy.setHeightForWidth(container8.sizePolicy().hasHeightForWidth())
+        container8.setSizePolicy(sizePolicy)
+        container8.setMinimumSize(QtCore.QSize(340, 35))
+
+        # 第一部分：固定文字 + 可编辑 x
+        label8 = QtWidgets.QLabel("电机下发", container8)
+        self.line_motor_8 = QtWidgets.QLineEdit(container8)
+        self.line_motor_8.setMaximumWidth(50)  # 调整这个值来控制 x 的宽度
+        self.line_motor_8.setStyleSheet("background-color: #f9f9f9; padding: 5px; border: none;")
+        self.line_motor_8.setObjectName("line_motor_7")
+
+        # 第二部分：长文本框
+        self.line8 = QtWidgets.QLineEdit(container8)
+        self.line8.setStyleSheet("background-color: #f9f9f9; padding: 5px 10px; border: none;")
         self.line8.setObjectName("line8")
-        self.horizontalLayout_19.addWidget(self.line8)
+
+        # 把组件加入到水平布局中
+        horizontal_layout8.addWidget(label8)
+        horizontal_layout8.addWidget(self.line_motor_8)
+        horizontal_layout8.addWidget(self.line8)
+
+        # 将 container1 添加到原 layout 中
+        self.horizontalLayout_19.addWidget(container8)
+
         self.verticalLayout_12.addWidget(self.widget_21)
         self.verticalLayout_16.addWidget(self.widget_14)
         self.verticalLayout_2.addWidget(self.groupBox_5)
@@ -2051,3 +2227,15 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "B11"))
         self.label_12.setText(_translate("MainWindow", "B12"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        
+        self.line1.setText(_translate("MainWindow", "日志测试0"))
+        self.line2.setText(_translate("MainWindow", "日志测试1"))
+        self.line3.setText(_translate("MainWindow", "日志测试2"))
+        self.line4.setText(_translate("MainWindow", "日志测试3"))
+        self.line5.setText(_translate("MainWindow", "日志测试4"))
+        self.line6.setText(_translate("MainWindow", "日志测试5"))
+        self.line7.setText(_translate("MainWindow", "日志测试6"))
+        self.line8.setText(_translate("MainWindow", "日志测试7"))
+
+        self.line_motor_3.setEnabled(False)
+        self.line_motor_5.setEnabled(False)

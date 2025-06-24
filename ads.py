@@ -25,10 +25,12 @@ class TwinCat3_ADSserver(QThread):
     Jigoushoulong_State = pyqtSignal(str,bool)
     Tuisong_State = pyqtSignal(str,bool)
 
-    def __init__(self, ip="5.108.90.221.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
+    def __init__(self, ip="127.0.0.1.1.1", amsNetIdTarget=pyads.PORT_TC3PLC1):
         '''
         type ip: str
         type amsNetIdTarget: pyads.PORT_xxx
+        5.108.90.221.1.1
+        127.0.0.1.1.1
         '''
         super().__init__()
         self.ip = ip
