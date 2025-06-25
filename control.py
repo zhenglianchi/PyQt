@@ -234,12 +234,12 @@ class Control:
 
     def updateFT(self, ft):
         if len(ft) == 6:
-            self.line_Fx.setText(str(round(ft[0],3)))
-            self.line_Fy.setText(str(round(ft[1],3)))
-            self.line_Fz.setText(str(round(ft[2],3)))
-            self.line_Tx.setText(str(round(ft[3],3)))
-            self.line_Ty.setText(str(round(ft[4],3)))
-            self.line_Tz.setText(str(round(ft[5],3)))
+            self.line_Tx.setText(str(round(ft[0],3)))
+            self.line_Ty.setText(str(round(ft[1],3)))
+            self.line_Tz.setText(str(round(ft[2],3)))
+            self.line_Fx.setText(str(round(ft[3],3)))
+            self.line_Fy.setText(str(round(ft[4],3)))
+            self.line_Fz.setText(str(round(ft[5],3)))
 
     # ------------------------------单机调试相关函数-------------------------------------
     

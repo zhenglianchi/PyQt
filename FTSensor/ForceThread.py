@@ -25,6 +25,7 @@ class ForceThread(QThread):
             while self._is_running:
                 try:
                     success, ft, status = self.sensor.try_read_ft_streaming(0.01)
+                    
                     if success:
                         self._ft_data.emit(ft.tolist())
                         self.writeFT(ft.tolist())
@@ -54,9 +55,9 @@ class ForceThread(QThread):
 
     def writeFT(self, ft):
         if len(ft) == 6:
-            self.tc3.write_by_name(f"SiJueSiFu.FX", round(ft[0],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.FY", round(ft[1],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.FZ", round(ft[2],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TX", round(ft[3],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TY", round(ft[4],3), pyads.PLCTYPE_LREAL)
-            self.tc3.write_by_name(f"SiJueSiFu.TZ", round(ft[5],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TX", round(ft[0],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TY", round(ft[1],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.TZ", round(ft[2],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.FX", round(ft[3],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.FY", round(ft[4],3), pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.FZ", round(ft[5],3), pyads.PLCTYPE_LREAL)
