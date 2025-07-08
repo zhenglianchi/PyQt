@@ -6,6 +6,7 @@ import re
 from video import VideoThread
 from Servo import VisualServoThread
 import time
+import numpy as np
 from FTSensor.ForceThread import ForceThread
 
 class Control:
@@ -624,7 +625,9 @@ class Control:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
             self.set_button_style(self.button3, self.open_servo_flag)
-            self.servo = VisualServoThread(self, 0.6)
+            lambda_gain = np.array([0.6, 0.6, 0.6, 0.0007, 0.0007, 0.0007])
+            lambda_gain = np.diag(lambda_gain)
+            self.servo = VisualServoThread(self, lambda_gain)
             self.servo.update_pose_signal.connect(self.write_delta)
             self.servo.finished_signal.connect(self.judge)
             self.servo.start_servo()
