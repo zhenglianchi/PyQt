@@ -506,11 +506,11 @@ class Control:
                 speed = float(speed_text)
                 
                 # 检查位置和速度范围
-                if position < -100 or position > 100:
-                    self.addLogs("位置范围错误,请输入-100到100之间的值")
+                if position < -180 or position > 180:
+                    self.addLogs("位置范围错误,请输入-180到180之间的值")
                     return
                     
-                if speed < 0 or speed > 15:
+                if speed < -30 or speed > 30:
                     self.addLogs("速度范围错误,请输入0到15之间的值")
                     return
                 

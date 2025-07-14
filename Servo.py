@@ -145,7 +145,7 @@ class VisualServoThread(QThread):
                 x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
                 rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
                 curr_pose = [x,y,z,rx,ry,rz]
-                cam_delta, world_delta,error_rms = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
+                cam_delta, world_delta, error_rms = servo(curr_pose, uv, Z, p_star, self.lambda_gain, self.video_thread.camera.K)
                 self.update_pose_signal.emit(world_delta.tolist())
                 if error_rms < 30:
                     num += 1
