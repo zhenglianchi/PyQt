@@ -815,9 +815,14 @@ class Control:
                     self.open_target_flag = False
         
 
-    def update_image(self, image):
+    def update_image(self, img_color):
         # Update the image_label with a new image
-        self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(image))
+        # get image info
+        h, w, ch = img_color.shape
+        # create QImage from image
+        bytes_per_line = ch * w
+        convert_to_qt_format = QImage(img_color.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        self.VisionPictureRGB_2.setPixmap(QPixmap.fromImage(convert_to_qt_format))
 
     def write_delta(self, delta_world):
         self.tc3.write_by_name(f"SiJueSiFu.RepythonX", delta_world[0], pyads.PLCTYPE_LREAL)

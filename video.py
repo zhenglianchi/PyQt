@@ -7,7 +7,7 @@ import cv2
 from ultralytics import YOLO
 
 class VideoThread(QThread):
-    change_pixmap_signal = pyqtSignal(QImage)
+    change_pixmap_signal = pyqtSignal(np.ndarray)
 
     def __init__(self):
         super().__init__()
@@ -78,13 +78,8 @@ class VideoThread(QThread):
                         self.Z = img_depth[int(center_point[1]), int(center_point[0])]/1000.0
 
                 img_color = cv2.resize(img_color, (467, 336))  # 注意参数是 (width, height)
-                # get image info
-                h, w, ch = img_color.shape
-                # create QImage from image
-                bytes_per_line = ch * w
-                convert_to_qt_format = QImage(img_color.data, w, h, bytes_per_line, QImage.Format_RGB888)
                 # emit signal
-                self.change_pixmap_signal.emit(convert_to_qt_format)
+                self.change_pixmap_signal.emit(img_color)
             else:
                 time.sleep(1)
 
