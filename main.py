@@ -63,6 +63,9 @@ class MyMainWindow(QMainWindow,Ui_MainWindow): #这里也要记得改
         self.button6.clicked.connect(self.control.open_doormoveopen)
         self.button7.clicked.connect(self.control.open_machineclose)
         self.button8.clicked.connect(self.control.open_target)
+        self.radio_auto.toggled.connect(self.control.on_mode_changed)
+        self.radio_manual.toggled.connect(self.control.on_mode_changed)
+        self.button_confirm.clicked.connect(self.control.on_confirm_clicked)
 
         self.ip_edit.setText("169.254.117.20")
     # 日志显示

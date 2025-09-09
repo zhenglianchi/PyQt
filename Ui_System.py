@@ -60,6 +60,23 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.groupConfig)
         self.horizontalLayout_2.setContentsMargins(80, 0, 80, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        # --- 新增：左侧模式选择 ---
+        self.widget_mode = QtWidgets.QWidget(self.groupConfig)
+        self.widget_mode.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.widget_mode.setStyleSheet("background: transparent; border: none;")
+        self.mode_layout = QtWidgets.QHBoxLayout(self.widget_mode)
+        self.mode_layout.setContentsMargins(0, 0, 0, 0)
+        self.mode_layout.setSpacing(15)
+
+        self.radio_manual = QtWidgets.QRadioButton("手动模式", self.widget_mode)
+        self.radio_manual.setChecked(True)  # 默认选中手动模式
+        self.radio_auto = QtWidgets.QRadioButton("程控模式", self.widget_mode)
+
+        self.mode_layout.addWidget(self.radio_manual)
+        self.mode_layout.addWidget(self.radio_auto)
+        self.horizontalLayout_2.addWidget(self.widget_mode)
+
+        # --- 原有标题 ---
         self.label_5 = QtWidgets.QLabel(self.groupConfig)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -69,6 +86,25 @@ class Ui_MainWindow(object):
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_2.addWidget(self.label_5)
+
+        # --- 新增：右侧确定按钮 ---
+        self.button_confirm = QtWidgets.QPushButton("确定", self.groupConfig)
+        self.button_confirm.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        self.button_confirm.setMinimumSize(QtCore.QSize(80, 30))
+        self.button_confirm.setStyleSheet("""
+        QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 5px 15px;
+                border-radius: 4px;
+                font: 14pt "Adobe 黑体 Std R";
+        }
+        QPushButton:hover {
+                background-color: #45a049;
+        }
+        """)
+        self.horizontalLayout_2.addWidget(self.button_confirm)
         self.verticalLayout_4.addWidget(self.groupConfig)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
@@ -2239,3 +2275,7 @@ class Ui_MainWindow(object):
 
         self.line_motor_3.setEnabled(False)
         self.line_motor_5.setEnabled(False)
+
+        self.radio_manual.setText(_translate("MainWindow", "手动模式"))
+        self.radio_auto.setText(_translate("MainWindow", "程控模式"))
+        self.button_confirm.setText(_translate("MainWindow", "确定"))

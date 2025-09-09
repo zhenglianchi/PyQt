@@ -37,11 +37,32 @@ class Control:
         self.open_machineclose_flag = False
         self.open_target_flag = False
         self.open_servo_flag = False
+
+        self.mode = 1 # 1:自动模式, 0:手动模式
         # 初始化连接
         self.tc3 = TwinCat3_ADSserver()
         
         
      # ---------------------总体控制相关函数-------------------------
+    def on_mode_changed(self):
+        if self.ui.radio_manual.isChecked():
+            # 手动模式
+            self.mode = 1
+        else:
+            # 程控模式
+            self.mode = 0
+
+    def on_confirm_clicked(self):
+        if self.mode == 1:
+            # 手动
+            print("手动模式")
+        else:
+            print("程控模式")
+            self.start_auto_sequence()
+
+    def start_auto_sequence(self):
+        print("自动流程开始")
+
     def open_connect(self):
         if self.connect_flag:
             self.connect_flag = False
