@@ -34,6 +34,7 @@ class VideoThread(QThread):
                 # 每个检测框数据格式为 [x1, y1, x2, y2, confidence, class_id]
                 boxes = results[0].boxes.data.cpu().numpy()
 
+                valid_targets = []
                 # 遍历每个检测框
                 for box in boxes:
                     x1, y1, x2, y2, conf, cls_id = box
@@ -42,12 +43,6 @@ class VideoThread(QThread):
                         x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
                         x1, x2 = np.clip([x1, x2], 0, img_depth.shape[1])
                         y1, y2 = np.clip([y1, y2], 0, img_depth.shape[0])
-
-                        # 提取检测框内的深度区域
-                        depth_roi = img_depth[y1:y2, x1:x2]
-
-                        # 直接计算平均深度（包括 0），单位转换为米
-                        self.center_z = np.mean(depth_roi) / 1000.0
                         
                         # 绘制矩形框（颜色为绿色，线宽为2）
                         cv2.rectangle(img_color, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -65,17 +60,39 @@ class VideoThread(QThread):
                         # 得到中心点坐标
                         center_point = (average_x, average_y)
 
+                        # 提取检测框内的深度区域
+                        depth_roi = img_depth[y1-1:y2+2, x1-1:x2+2]
+
+                        # 直接计算平均深度（包括 0），单位转换为米
+                        avg_depth = np.mean(depth_roi) / 1000.0
+
                         target_points = self.resize_and_center_box(detected_points,padding=0)
 
                         for point in target_points:
                             cv2.circle(img_color, point, 3, (255, 255, 255), -1)
 
-                        uv = np.array(detected_points).T
-                        p_star = np.array(target_points).T
+                        # 保存这个目标的数据，供后续选择最近者使用
+                        valid_targets.append({
+                            'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2,
+                            'avg_depth': avg_depth,
+                            'detected_points': detected_points,
+                            'target_points': target_points,
+                            'center_point': center_point,
+                            'uv': np.array(detected_points).T,
+                            'p_star': np.array(target_points).T,
+                            'Z_center': img_depth[int(center_point[1]), int(center_point[0])] / 1000.0
+                        })
 
-                        self.uv = uv
-                        self.p_star = p_star
-                        self.Z = img_depth[int(center_point[1]), int(center_point[0])]/1000.0
+                # 第二遍：从所有有效目标中选择深度最小（最近）的那个，更新 self 变量
+                if valid_targets:
+                    # 按平均深度排序，取第一个（最小深度 = 最近）
+                    closest_target = min(valid_targets, key=lambda t: t['avg_depth'])
+
+                    # 更新类变量（只赋值给最近目标）
+                    self.center_z = closest_target['avg_depth']
+                    self.uv = closest_target['uv']
+                    self.p_star = closest_target['p_star']
+                    self.Z = closest_target['Z_center']  # 或者你也可以用 avg_depth，根据你的控制需求
 
                 img_color = cv2.resize(img_color, (467, 336))  # 注意参数是 (width, height)
                 # emit signal

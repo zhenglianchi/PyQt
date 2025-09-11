@@ -8,7 +8,6 @@ from machinevisiontoolbox import *
 from spatialmath.base import *
 from spatialmath import *
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-import pyads
 from scipy.spatial.transform import Rotation as R
 
 def visjac_p(uv, depth,K):
@@ -153,9 +152,7 @@ class VisualServoThread(QThread):
 
         while self._run_flag:
             # 先用中心点深度，如果中心点深度为0则使用平均深度
-            Z = self.video_thread.Z
-            if Z == 0:
-                continue
+            Z = self.video_thread.center_z if self.video_thread.center_z != 0 else self.video_thread.Z
             print(Z)
 
             x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
