@@ -734,7 +734,7 @@ class Control:
         else:
             Tuisong_State = self.tc3.read_by_name(f"GVL.Tuisong_State", pyads.PLCTYPE_BOOL)
             if Tuisong_State:
-                self.addLogs("机构收拢流程结束")
+                self.addLogs("目标推送流程结束")
                 self.set_led_style(self.led8, self.open_target_flag)
                     
     

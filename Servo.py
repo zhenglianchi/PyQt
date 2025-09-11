@@ -92,10 +92,7 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
     return v,delta_speed,error_rms
 
 
-def forward_planner(pose, Z):
-    if Z <= 1e-6:
-        Z = 0.5
-
+def forward_planner(pose):
     v = [0,0,0.03,0,0,0]
 
     # 重新计算位姿增量 Td
@@ -158,13 +155,13 @@ class VisualServoThread(QThread):
             # 先用中心点深度，如果中心点深度为0则使用平均深度
             Z = self.video_thread.Z
             if Z == 0:
-                Z = self.video_thread.center_z
+                continue
             print(Z)
 
             x,y,z = float(self.ui.line_x.text()),float(self.ui.line_y.text()),float(self.ui.line_z.text())
             rx,ry,rz = float(self.ui.line_Rr.text()),float(self.ui.line_Rp.text()),float(self.ui.line_Ry.text())
             curr_pose = [x,y,z,rx,ry,rz]
-            world_delta = forward_planner(curr_pose, Z)
+            world_delta = forward_planner(curr_pose)
             self.update_pose_signal.emit(world_delta.tolist())
 
             time.sleep(0.1)  # 避免CPU占用过高
