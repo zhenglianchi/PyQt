@@ -65,8 +65,11 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
     e = e.flatten(order="F")  # convert columnwise to a 1D vector
 
     error_rms = np.sqrt(np.mean(e**2))
+    #print("误差:",error_rms)
 
     v = -lambda_gain * np.linalg.pinv(J) @ e
+
+    #print("当前增量在相机坐标系下:\n",v)
 
     # 重新计算位姿增量 Td
     Td = SE3.Delta(v)
@@ -74,25 +77,34 @@ def servo(pose,uv,Z,p_star,lambda_gain,K):
     # 获得机械臂末端位姿
     current_pos = pose
 
+    #print(current_pos)
+
     current_object_pos = current_pos[:3]
     current_object_rot = current_pos[3:]
 
-    T_rotation = R.from_rotvec(np.array(current_object_rot)).as_matrix()
-    T_matrix_to_world = SE3.Rt(R=T_rotation,t=current_object_pos)
+    T_translation = SE3(current_object_pos)
+    T_rotation_to_world = SE3.Rx(current_object_rot[0]) * SE3.Ry(current_object_rot[1]) * SE3.Rz(current_object_rot[2])
+
+    T_matrix_to_world = T_translation * T_rotation_to_world
+
 
     T_world_d = T_matrix_to_world @ Td @ T_matrix_to_world.inv()
+
+    # print("当前位姿增量在相机坐标系下:\n",Td)
+    # print("当前位姿增量在世界坐标系下:\n",T_world_d)
 
     # 提取平移部分
     translation = T_world_d.t
     rot = v[3:]
 
     delta_speed = np.hstack((translation, rot)).reshape(1, 6).squeeze()
+    print(delta_speed)
 
     return v,delta_speed,error_rms
 
 
 def forward_planner(pose):
-    v = [0,0,0.03,0,0,0]
+    v = [0,0,0.01,0,0,0]
 
     # 重新计算位姿增量 Td
     Td = SE3.Delta(v)
@@ -100,11 +112,16 @@ def forward_planner(pose):
     # 获得机械臂末端位姿
     current_pos = pose
 
+    #print(current_pos)
+
     current_object_pos = current_pos[:3]
     current_object_rot = current_pos[3:]
 
-    T_rotation = R.from_rotvec(np.array(current_object_rot)).as_matrix()
-    T_matrix_to_world = SE3.Rt(R=T_rotation,t=current_object_pos)
+    T_translation = SE3(current_object_pos)
+    T_rotation_to_world = SE3.Rx(current_object_rot[0]) * SE3.Ry(current_object_rot[1]) * SE3.Rz(current_object_rot[2])
+
+    T_matrix_to_world = T_translation * T_rotation_to_world
+
 
     T_world_d = T_matrix_to_world @ Td @ T_matrix_to_world.inv()
 
@@ -133,7 +150,7 @@ class VisualServoThread(QThread):
         while self._run_flag:
             if self.video_thread.uv is not None and self.video_thread.p_star is not None and self.video_thread.Z is not None:
                 print(num)
-                if num == 80:
+                if num == 300:
                     break
                 uv = self.video_thread.uv
                 p_star = self.video_thread.p_star

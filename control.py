@@ -85,6 +85,12 @@ class Control:
             margin-top: 0px;
         """)
             self.addLogs("Twincat连接关闭")
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRx", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRy", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRz", 0, pyads.PLCTYPE_LREAL)
             self.tc3.stop_monitoring()
             self.tc3.variables={}
             self.tc3.close()
@@ -130,6 +136,12 @@ class Control:
                 border-bottom: 2px solid #a3a3a3;
                 margin-top: 0px;
                 """)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonRx", 0, pyads.PLCTYPE_LREAL)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonRy", 0, pyads.PLCTYPE_LREAL)
+                self.tc3.write_by_name(f"SiJueSiFu.RepythonRz", 0, pyads.PLCTYPE_LREAL)
             except Exception as e:
                 self.addLogs(str(e))
 
@@ -642,13 +654,14 @@ class Control:
             self.tc3.write_by_name(f"SiJueSiFu.RepythonX", 0, pyads.PLCTYPE_LREAL)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonY", 0, pyads.PLCTYPE_LREAL)
             self.tc3.write_by_name(f"SiJueSiFu.RepythonZ", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRx", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRy", 0, pyads.PLCTYPE_LREAL)
+            self.tc3.write_by_name(f"SiJueSiFu.RepythonRz", 0, pyads.PLCTYPE_LREAL)
         else:
             self.open_servo_flag = True
             self.addLogs("捕获流程开始")
             self.set_button_style(self.button3, self.open_servo_flag)
-            lambda_gain = np.array([0.6, 0.6, 0.6, 0.0007, 0.0007, 0.0007])
-            lambda_gain = np.diag(lambda_gain)
-            self.servo = VisualServoThread(self, lambda_gain)
+            self.servo = VisualServoThread(self, 0.6)
             self.servo.update_pose_signal.connect(self.write_delta)
             self.servo.finished_signal.connect(self.judge)
             self.servo.start_servo()
@@ -755,12 +768,12 @@ class Control:
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ActPos", pyads.PLCTYPE_LREAL, self.value_changed)
             self.tc3.add_variable(f"GVL.axis[{i+1}].NcToPlc.ErrorCode", pyads.PLCTYPE_UDINT, self.value_changed)
 
-        '''self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinY", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinZ", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRX", pyads.PLCTYPE_LREAL, self.value_changed)
         self.tc3.add_variable(f"SiJueSiFu.ReaTwinRY", pyads.PLCTYPE_LREAL, self.value_changed)
-        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)'''
+        self.tc3.add_variable(f"SiJueSiFu.ReaTwinRZ", pyads.PLCTYPE_LREAL, self.value_changed)
 
         self.tc3.add_variable(f"GVL.JigouZhankai_State", pyads.PLCTYPE_BOOL, self.value_changed)
         self.tc3.add_variable(f"GVL.CangMen_State", pyads.PLCTYPE_BOOL, self.value_changed)
